@@ -24,6 +24,11 @@ export const metadata: Metadata = {
     description: 'Professional legal services & intelligence by Adv. A.K. Tripathi',
   },
   robots: { index: true, follow: true },
+  icons: {
+  icon: '/logo-transparent.png',
+  shortcut: '/logo-transparent.png',
+  apple: '/logo-transparent.png',
+},
   alternates: { canonical: 'https://nyayasutra.com' },
 };
 

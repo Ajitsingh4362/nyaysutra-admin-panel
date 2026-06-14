@@ -52,17 +52,18 @@ export default function Navbar() {
           : 'bg-[#07090F]/95'}
         backdrop-blur-xl border-b border-[rgba(201,168,76,0.12)]`}
     >
-      <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-5 flex items-center justify-between h-16 gap-3">
+      <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-5 flex items-center justify-between h-20 gap-3">
 
         {/* ── Logo ── */}
-        <Link href="/" className="shrink-0 flex items-center" aria-label="NyayaSutra Home">
-          <Image
-            src="/logo-transparent.png"
-            alt="NyayaSutra — Legal Intelligence"
-            width={160} height={52}
-            className="h-10 w-auto object-contain"
-            priority
-          />
+        <Link href="/" className="shrink-0 flex items-center bg-transparent" aria-label="NyayaSutra Home">
+         <Image
+  src="/logo-transparent.png"
+  alt="NyayaSutra — Legal Intelligence"
+  width={210}
+  height={70}
+  className="h-12 sm:h-14 w-auto object-contain"
+  priority
+/>
         </Link>
 
         {/* ── Desktop Nav ── */}
