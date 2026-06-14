@@ -1,0 +1,11 @@
+{
+  "/page": "app/page.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/blogs/route": "app/api/blogs/route.js",
+  "/api/inquiries/route": "app/api/inquiries/route.js",
+  "/api/gallery/route": "app/api/gallery/route.js",
+  "/api/courses/route": "app/api/courses/route.js",
+  "/contact/page": "app/contact/page.js",
+  "/api/upload/route": "app/api/upload/route.js",
+  "/admin/page": "app/admin/page.js"
+}
