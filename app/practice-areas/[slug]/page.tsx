@@ -46,113 +46,139 @@ export default function PracticeDetail({ params }: { params: { slug: string } })
 
       {/* Content */}
       <section className="section">
-        <div className="container px-4 mx-auto grid lg:grid-cols-[1fr_300px] gap-10">
-          <div>
-            <FadeInSection>
-              <p className="muted leading-relaxed text-base">{area.description}</p>
-            </FadeInSection>
+        <div className="container px-4 mx-auto">
+          <div className="grid lg:grid-cols-[1fr_280px] gap-8 lg:gap-10">
 
-            {/* Clickable Sub-Areas */}
-            <div className="mt-10">
-              <h2 className="font-display text-2xl font-bold text-[var(--gold)] mb-5">What We Handle</h2>
-              <p className="muted text-sm mb-5">Click any item below to expand detailed information.</p>
-              <div className="space-y-2">
-                {(area.subAreas as SubArea[]).map((sub, i) => (
-                  <div key={i} className="rounded-xl border border-[rgba(201,168,76,0.12)] overflow-hidden bg-[rgba(201,168,76,0.02)] hover:border-[rgba(201,168,76,0.3)] transition-colors">
-                    <button
-                      onClick={() => setOpenSub(openSub === i ? null : i)}
-                      className="w-full flex items-center justify-between p-4 text-left gap-3"
-                    >
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <ChevronRight size={14} className={`text-[var(--gold)] shrink-0 transition-transform ${openSub === i ? 'rotate-90' : ''}`}/>
-                        <span className="font-semibold text-sm sm:text-base">{sub.name}</span>
-                      </div>
-                      {openSub === i
-                        ? <ChevronUp size={16} className="text-[var(--gold)] shrink-0"/>
-                        : <ChevronDown size={16} className="text-[var(--muted2)] shrink-0"/>}
-                    </button>
-                    <AnimatePresence initial={false}>
-                      {openSub === i && (
-                        <motion.div
-                          key="content"
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.28, ease: [0.25, 0.4, 0.25, 1] }}
-                          style={{ overflow: 'hidden' }}
-                        >
-                          <div className="px-5 pb-5 pt-1 border-t border-[rgba(201,168,76,0.1)]">
-                            <p className="text-[var(--muted)] text-sm leading-relaxed">{sub.content}</p>
-                            <div className="flex gap-3 mt-4">
-                              <a href="https://wa.me/919971950371" target="_blank" className="btn-gold text-xs py-2 px-4">
-                                <MessageCircle size={12}/> Consult Now
-                              </a>
-                              <Link href="/contact" className="btn-outline text-xs py-2 px-4">Book Appointment</Link>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Main Content */}
+            <div className="min-w-0 w-full">
+              <FadeInSection>
+                <p className="muted leading-relaxed text-base">{area.description}</p>
+              </FadeInSection>
 
-            {/* Process */}
-            {area.process && (
+              {/* Clickable Sub-Areas */}
               <div className="mt-10">
-                <h2 className="font-display text-2xl font-bold text-[var(--gold)] mb-5">Our Approach</h2>
-                <StaggerGroup className="space-y-3" stagger={0.08}>
-                  {area.process.map((step, i) => (
-                    <StaggerItem key={i}>
-                      <div className="flex gap-4 p-4 rounded-xl border border-[rgba(201,168,76,0.12)] bg-[rgba(201,168,76,0.03)]">
-                        <div className="w-8 h-8 rounded-full bg-[rgba(201,168,76,0.15)] flex items-center justify-center text-[var(--gold)] font-bold text-sm shrink-0">{i + 1}</div>
-                        <div>
-                          <h4 className="font-semibold text-sm">{step.title}</h4>
-                          <p className="text-[var(--muted2)] text-xs mt-1">{step.desc}</p>
-                        </div>
-                      </div>
-                    </StaggerItem>
-                  ))}
-                </StaggerGroup>
-              </div>
-            )}
-
-            {/* Courts */}
-            <div className="mt-10">
-              <h2 className="font-display text-2xl font-bold text-[var(--gold)] mb-4">Courts We Practice In</h2>
-              <div className="flex flex-wrap gap-2">
-                {area.courts.map(c => (
-                  <span key={c} className="px-3 py-1.5 rounded-xl text-xs border border-[rgba(201,168,76,0.2)] text-[var(--muted)]">{c}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <aside>
-            <div className="card sticky top-24">
-              <Icon className="text-[var(--gold)]" size={32}/>
-              <h3 className="font-display text-xl font-semibold mt-4">{area.title}</h3>
-              <p className="text-[var(--muted2)] text-sm mt-2">{area.tagline}</p>
-              <div className="mt-5 space-y-3">
-                <a href="https://wa.me/919971950371" target="_blank" className="btn-gold w-full justify-center text-sm">
-                  <MessageCircle size={14}/> WhatsApp Consult
-                </a>
-                <Link href="/contact" className="btn-outline w-full justify-center text-sm">Book Appointment</Link>
-              </div>
-              <div className="mt-5 pt-4 border-t border-[rgba(201,168,76,0.1)]">
-                <p className="text-xs text-[var(--gold)] font-semibold mb-3">Related Areas</p>
+                <h2 className="font-display text-xl sm:text-2xl font-bold text-[var(--gold)] mb-3">What We Handle</h2>
+                <p className="muted text-sm mb-5">Click any item below to expand detailed information.</p>
                 <div className="space-y-2">
-                  {area.related.map(r => (
-                    <p key={r} className="text-xs text-[var(--muted2)] flex items-center gap-2">
-                      <ChevronRight size={10} className="text-[var(--gold)]"/>{r}
-                    </p>
+                  {(area.subAreas as SubArea[]).map((sub, i) => (
+                    <div key={i} className="rounded-xl border border-[rgba(201,168,76,0.12)] overflow-hidden bg-[rgba(201,168,76,0.02)] hover:border-[rgba(201,168,76,0.3)] transition-colors w-full">
+                      <button
+                        onClick={() => setOpenSub(openSub === i ? null : i)}
+                        className="w-full flex items-center justify-between p-3 sm:p-4 text-left gap-2"
+                      >
+                        <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                          <ChevronRight
+                            size={13}
+                            className={`text-[var(--gold)] shrink-0 transition-transform ${openSub === i ? 'rotate-90' : ''}`}
+                          />
+                          <span className="font-semibold text-sm leading-snug">{sub.name}</span>
+                        </div>
+                        <span className="shrink-0 ml-2">
+                          {openSub === i
+                            ? <ChevronUp size={15} className="text-[var(--gold)]"/>
+                            : <ChevronDown size={15} className="text-[var(--muted2)]"/>}
+                        </span>
+                      </button>
+                      <AnimatePresence initial={false}>
+                        {openSub === i && (
+                          <motion.div
+                            key="content"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.28, ease: [0.25, 0.4, 0.25, 1] }}
+                            style={{ overflow: 'hidden' }}
+                          >
+                            <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-1 border-t border-[rgba(201,168,76,0.1)]">
+                              <p className="text-[var(--muted)] text-sm leading-relaxed">{sub.content}</p>
+                              <div className="flex flex-wrap gap-2 sm:gap-3 mt-4">
+                                <a
+                                  href="https://wa.me/919971950371"
+                                  target="_blank"
+                                  className="btn-gold text-xs py-2 px-3 sm:px-4"
+                                >
+                                  <MessageCircle size={12}/> Consult Now
+                                </a>
+                                <Link href="/contact" className="btn-outline text-xs py-2 px-3 sm:px-4">
+                                  Book Appointment
+                                </Link>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Process */}
+              {area.process && (
+                <div className="mt-10">
+                  <h2 className="font-display text-xl sm:text-2xl font-bold text-[var(--gold)] mb-5">Our Approach</h2>
+                  <StaggerGroup className="space-y-3" stagger={0.08}>
+                    {area.process.map((step, i) => (
+                      <StaggerItem key={i}>
+                        <div className="flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border border-[rgba(201,168,76,0.12)] bg-[rgba(201,168,76,0.03)]">
+                          <div className="w-8 h-8 rounded-full bg-[rgba(201,168,76,0.15)] flex items-center justify-center text-[var(--gold)] font-bold text-sm shrink-0">
+                            {i + 1}
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="font-semibold text-sm">{step.title}</h4>
+                            <p className="text-[var(--muted2)] text-xs mt-1 leading-relaxed">{step.desc}</p>
+                          </div>
+                        </div>
+                      </StaggerItem>
+                    ))}
+                  </StaggerGroup>
+                </div>
+              )}
+
+              {/* Courts */}
+              <div className="mt-10">
+                <h2 className="font-display text-xl sm:text-2xl font-bold text-[var(--gold)] mb-4">Courts We Practice In</h2>
+                <div className="flex flex-wrap gap-2">
+                  {area.courts.map(c => (
+                    <span key={c} className="px-3 py-1.5 rounded-xl text-xs border border-[rgba(201,168,76,0.2)] text-[var(--muted)]">
+                      {c}
+                    </span>
                   ))}
                 </div>
               </div>
             </div>
-          </aside>
+
+            {/* Sidebar — shown below on mobile, right column on desktop */}
+            <aside className="w-full lg:w-[280px]">
+              <div className="card lg:sticky lg:top-24">
+                <Icon className="text-[var(--gold)]" size={28}/>
+                <h3 className="font-display text-lg font-semibold mt-3">{area.title}</h3>
+                <p className="text-[var(--muted2)] text-sm mt-2 leading-snug">{area.tagline}</p>
+                <div className="mt-5 space-y-3">
+                  <a
+                    href="https://wa.me/919971950371"
+                    target="_blank"
+                    className="btn-gold w-full justify-center text-sm"
+                  >
+                    <MessageCircle size={14}/> WhatsApp Consult
+                  </a>
+                  <Link href="/contact" className="btn-outline w-full justify-center text-sm">
+                    Book Appointment
+                  </Link>
+                </div>
+                <div className="mt-5 pt-4 border-t border-[rgba(201,168,76,0.1)]">
+                  <p className="text-xs text-[var(--gold)] font-semibold mb-3">Related Areas</p>
+                  <div className="space-y-2">
+                    {area.related.map(r => (
+                      <p key={r} className="text-xs text-[var(--muted2)] flex items-center gap-2">
+                        <ChevronRight size={10} className="text-[var(--gold)] shrink-0"/>{r}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+          </div>
         </div>
       </section>
     </main>
