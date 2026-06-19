@@ -3,6 +3,8 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WhatsAppFloat from '@/components/WhatsAppFloat';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: { default: 'NyayaSutra — Legal Intelligence | Adv. A.K. Tripathi', template: '%s | NyayaSutra' },
@@ -49,6 +51,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </main>
         <Footer />
         <WhatsAppFloat />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
