@@ -36,9 +36,29 @@ const COURSE_TYPES = [
 const GRADES = ['Successfully Completed', 'A+ (Outstanding)', 'A (Excellent)', 'B+ (Very Good)', 'B (Good)', 'Distinction', 'Merit'];
 
 // ── Export helpers ─────────────────────────────────────────────
-async function exportAsPNG(node: HTMLElement, filename: string) {
+// IMPORTANT: html2canvas must capture the certificate at its true, unscaled
+// 1754x1240 size. Capturing a CSS-`transform: scale()`'d element causes
+// text/element positions to be computed incorrectly on many mobile browsers
+// (this caused the overlapping-text bug). To avoid this we always render a
+// second, hidden, full-size copy of the certificate purely for export, and
+// keep the visible on-screen preview completely separate (scaled only via
+// a responsive aspect-ratio box — never via CSS transform).
+async function captureNode(node: HTMLElement) {
   const html2canvas = (await import('html2canvas')).default;
-  const canvas = await html2canvas(node, { scale: 2, useCORS: true, backgroundColor: '#FCFAF4' });
+  return html2canvas(node, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#FCFAF4',
+    width: 1754,
+    height: 1240,
+    windowWidth: 1754,
+    windowHeight: 1240,
+    logging: false,
+  });
+}
+
+async function exportAsPNG(node: HTMLElement, filename: string) {
+  const canvas = await captureNode(node);
   const link = document.createElement('a');
   link.download = `${filename}.png`;
   link.href = canvas.toDataURL('image/png');
@@ -46,9 +66,8 @@ async function exportAsPNG(node: HTMLElement, filename: string) {
 }
 
 async function exportAsPDF(node: HTMLElement, filename: string) {
-  const html2canvas = (await import('html2canvas')).default;
+  const canvas = await captureNode(node);
   const { jsPDF } = await import('jspdf');
-  const canvas = await html2canvas(node, { scale: 2, useCORS: true, backgroundColor: '#FCFAF4' });
   const imgData = canvas.toDataURL('image/png');
   // A4 landscape: 297mm x 210mm
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
@@ -63,6 +82,27 @@ function CertificateForm({ cert, onSave, onCancel }: { cert: Certificate | null;
   const [exporting, setExporting] = useState<'pdf' | 'png' | null>(null);
   const [msg, setMsg] = useState('');
   const previewRef = useRef<HTMLDivElement>(null);
+  const previewBoxRef = useRef<HTMLDivElement>(null);
+  const [previewScale, setPreviewScale] = useState(0.2);
+
+  // Recalculate the preview scale whenever the container is resized
+  // (window resize, orientation change, sidebar collapse, etc.) so the
+  // certificate always fits its box exactly — no overlap, no clipping.
+  useEffect(() => {
+    const box = previewBoxRef.current;
+    if (!box) return;
+    const CERT_WIDTH = 1754;
+
+    const updateScale = () => {
+      const boxWidth = box.getBoundingClientRect().width;
+      if (boxWidth > 0) setPreviewScale(boxWidth / CERT_WIDTH);
+    };
+
+    updateScale();
+    const observer = new ResizeObserver(updateScale);
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, []);
 
   const setF = (k: keyof Certificate, v: any) => setForm(p => ({ ...p, [k]: v }));
 
@@ -203,37 +243,50 @@ function CertificateForm({ cert, onSave, onCancel }: { cert: Certificate | null;
           </div>
         </div>
 
-        {/* Live Preview */}
+        {/* Live Preview — responsive scaling via ResizeObserver (works correctly on all screen sizes) */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-sm flex items-center gap-2"><Eye size={14} className="text-[var(--gold)]" /> Live Preview</h3>
             <span className="text-[10px] text-[var(--muted2)]">Scaled preview — exports at full print quality</span>
           </div>
           <div
-            className="rounded-2xl overflow-hidden border border-[rgba(201,168,76,0.2)] bg-[#0a0a0a]"
-            style={{
-              width: '100%',
-              aspectRatio: '1754 / 1240',
-              position: 'relative',
-            }}
+            ref={previewBoxRef}
+            className="rounded-2xl overflow-hidden border border-[rgba(201,168,76,0.2)] bg-[#0a0a0a] relative"
+            style={{ width: '100%', aspectRatio: '1754 / 1240' }}
           >
+            {/* Visible preview: scaled to fit the box width exactly, recalculated on resize */}
             <div
               style={{
-                transform: 'scale(var(--cert-scale, 0.34))',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: 1754,
+                height: 1240,
+                transform: `scale(${previewScale})`,
                 transformOrigin: 'top left',
-                width: '1754px',
-                height: '1240px',
               }}
-              className="cert-preview-wrap"
             >
-              <CertificateTemplate ref={previewRef} data={form} />
+              <CertificateTemplate data={form} />
             </div>
           </div>
-          <style>{`
-            .cert-preview-wrap { --cert-scale: 0.34; }
-            @media (min-width: 1400px) { .cert-preview-wrap { --cert-scale: 0.40; } }
-          `}</style>
         </div>
+      </div>
+
+      {/* Hidden, always full-size (1754x1240, unscaled) certificate — used ONLY for PNG/PDF export.
+          Capturing an unscaled, off-screen node avoids the CSS-transform + html2canvas
+          overlapping-text bug seen on some mobile browsers. */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: '-99999px',
+          width: 1754,
+          height: 1240,
+          pointerEvents: 'none',
+        }}
+        aria-hidden="true"
+      >
+        <CertificateTemplate ref={previewRef} data={form} />
       </div>
     </div>
   );
