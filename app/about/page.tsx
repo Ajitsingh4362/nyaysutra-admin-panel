@@ -177,6 +177,16 @@ export default function About() {
       </section>
 
       {/* CTA */}
+      {/* Meet the Team teaser */}
+      <section className="section-sm bg-[#0C1018] px-4">
+        <div className="container mx-auto text-center">
+          <p className="tag">Our People</p>
+          <h2 className="font-display text-3xl font-bold mt-3">Meet the Advocate Team</h2>
+          <p className="muted mt-3 max-w-xl mx-auto">Beyond the founder, NyayaSutra is built by a team of dedicated legal professionals across practice areas.</p>
+          <Link href="/team" className="btn-gold mt-6"><Users size={14}/> View Full Team <ArrowRight size={14}/></Link>
+        </div>
+      </section>
+
       <section className="section-sm px-4">
         <div className="container mx-auto text-center">
           <h2 className="font-display text-3xl font-bold">Ready to work with NyayaSutra?</h2>

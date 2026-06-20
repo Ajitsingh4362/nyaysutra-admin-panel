@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Facebook, Instagram, Linkedin, Youtube, Twitter, Mail, MapPin, Phone, MessageCircle } from 'lucide-react';
 
-const quickLinks = [['/','Home'],['/about','About Us'],['/practice-areas','Practice Areas'],['/courts','Courts & Jurisdiction'],['/students','Students & Internship'],['/gallery','Gallery'],['/blog','Blog'],['/contact','Contact']];
+const quickLinks = [['/','Home'],['/about','About Us'],['/team','Advocate Team'],['/practice-areas','Practice Areas'],['/courts','Courts & Jurisdiction'],['/students','Students & Internship'],['/gallery','Gallery'],['/blog','Blog'],['/contact','Contact']];
 const practiceLinks = ['Supreme Court','High Courts','Criminal Law','Civil Litigation','Family Law','Constitutional Law','Corporate Law','Arbitration & ADR','RTI & Human Rights','Cyber Law'];
 const socials = [
   { icon: Facebook,  href:'https://www.facebook.com/share/1CjgsCYHCE/', label:'Facebook',  color:'hover:text-blue-400' },

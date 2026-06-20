@@ -9,6 +9,7 @@ import LanguageSwitcher from './LanguageSwitcher';
 const nav = [
   { href: '/',               label: 'Home' },
   { href: '/about',          label: 'About' },
+  { href: '/team',           label: 'Team' },
   { href: '/practice-areas', label: 'Practice Areas' },
   { href: '/courts',         label: 'Courts' },
   { href: '/students',       label: 'Students' },

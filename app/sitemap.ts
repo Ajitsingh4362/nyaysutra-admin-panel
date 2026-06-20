@@ -5,6 +5,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const pages = [
     { url: base, priority: 1.0 },
     { url: `${base}/about`, priority: 0.9 },
+    { url: `${base}/team`, priority: 0.8 },
     { url: `${base}/practice-areas`, priority: 0.9 },
     { url: `${base}/courts`, priority: 0.8 },
     { url: `${base}/services`, priority: 0.8 },
