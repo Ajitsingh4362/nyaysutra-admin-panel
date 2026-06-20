@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import GalleryManager from './_components/GalleryManager';
 import CourseManager from './_components/CourseManager';
 import TeamManager from './_components/TeamManager';
+import CertificateManager from './_components/CertificateManager';
 // import AnalyticsDashboard from './_components/AnalyticsDashboard'; // Disabled until Google Analytics ID is added — uncomment to re-enable
 import {
   LayoutDashboard, FileText, Users, Inbox, LogOut, Menu, X, Plus,
@@ -11,12 +12,12 @@ import {
   Image as ImageIcon, Code, CheckCircle, Tag, Star, Search,
   RefreshCw, Upload, BarChart2, TrendingUp,
   BookOpen, MessageCircle, Phone, Mail, Globe, Layers, Hash,
-  Camera, Video, GraduationCap, Settings, Bell, ChevronDown,
+  Camera, Video, GraduationCap, Settings, Bell, ChevronDown, Award,
   ExternalLink, Copy, Archive, Filter
 } from 'lucide-react';
 
 // ─── TYPES ──────────────────────────────────────────────────────────
-type Tab = 'dashboard' | 'blogs' | 'blog-editor' | 'inquiries' | 'gallery' | 'courses' | 'team' | 'analytics' | 'seo' | 'settings';
+type Tab = 'dashboard' | 'blogs' | 'blog-editor' | 'inquiries' | 'gallery' | 'courses' | 'team' | 'certificates' | 'analytics' | 'seo' | 'settings';
 
 interface Blog {
   _id?: string; id?: string; title: string; slug: string; category: string;
@@ -637,6 +638,7 @@ export default function AdminPanel() {
     { id:'gallery',     icon: Camera,          label:'Gallery' },
     { id:'courses',     icon: GraduationCap,   label:'Courses' },
     { id:'team',        icon: Users,           label:'Advocate Team' },
+    { id:'certificates',icon: Award,           label:'Certificates' },
     // { id:'analytics',   icon: BarChart2,       label:'Analytics' }, // Disabled until Google Analytics ID is added — uncomment to re-enable
     { id:'seo',         icon: Globe,           label:'SEO Settings' },
     { id:'settings',    icon: Settings,        label:'Settings' },
@@ -788,12 +790,13 @@ export default function AdminPanel() {
 
               <div className="card">
                 <h3 className="font-semibold text-sm flex items-center gap-2 mb-4"><TrendingUp size={14} className="text-[var(--gold)]"/> Quick Actions</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                   {[
                     { label:'New Blog Post',    icon:Plus,          action: openNewBlog },
                     { label:'View Inquiries',   icon:Inbox,         action:()=>setTab('inquiries') },
                     { label:'Gallery Upload',   icon:Camera,        action:()=>setTab('gallery') },
                     { label:'Advocate Team',    icon:Users,         action:()=>setTab('team') },
+                    { label:'Generate Certificate', icon:Award,     action:()=>setTab('certificates') },
                     { label:'SEO Settings',     icon:Globe,         action:()=>setTab('seo') },
                   ].map(({ label, icon: Icon, action }) => (
                     <button key={label} onClick={action}
@@ -955,6 +958,9 @@ export default function AdminPanel() {
 
           {/* ──────────── ADVOCATE TEAM ──────────── */}
           {tab==='team' && <TeamManager/>}
+
+          {/* ──────────── CERTIFICATES ──────────── */}
+          {tab==='certificates' && <CertificateManager/>}
 
           {/* ──────────── ANALYTICS (Disabled until Google Analytics ID is added) ──────────── */}
           {/* {tab==='analytics' && <AnalyticsDashboard/>} */}
