@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import GalleryManager from './_components/GalleryManager';
 import CourseManager from './_components/CourseManager';
-import AnalyticsDashboard from './_components/AnalyticsDashboard';
+// import AnalyticsDashboard from './_components/AnalyticsDashboard'; // Disabled until Google Analytics ID is added — uncomment to re-enable
 import {
   LayoutDashboard, FileText, Users, Inbox, LogOut, Menu, X, Plus,
   Trash2, Eye, Edit3, Save, Bold, Italic, Underline, List, Link2,
@@ -635,7 +635,7 @@ export default function AdminPanel() {
     { id:'inquiries',   icon: Inbox,           label:'Inquiries',    badge: stats.inqNew || undefined },
     { id:'gallery',     icon: Camera,          label:'Gallery' },
     { id:'courses',     icon: GraduationCap,   label:'Courses' },
-    { id:'analytics',   icon: BarChart2,       label:'Analytics' },
+    // { id:'analytics',   icon: BarChart2,       label:'Analytics' }, // Disabled until Google Analytics ID is added — uncomment to re-enable
     { id:'seo',         icon: Globe,           label:'SEO Settings' },
     { id:'settings',    icon: Settings,        label:'Settings' },
   ];
@@ -786,12 +786,11 @@ export default function AdminPanel() {
 
               <div className="card">
                 <h3 className="font-semibold text-sm flex items-center gap-2 mb-4"><TrendingUp size={14} className="text-[var(--gold)]"/> Quick Actions</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
                     { label:'New Blog Post',    icon:Plus,          action: openNewBlog },
                     { label:'View Inquiries',   icon:Inbox,         action:()=>setTab('inquiries') },
                     { label:'Gallery Upload',   icon:Camera,        action:()=>setTab('gallery') },
-                    { label:'Analytics',        icon:BarChart2,     action:()=>setTab('analytics') },
                     { label:'SEO Settings',     icon:Globe,         action:()=>setTab('seo') },
                   ].map(({ label, icon: Icon, action }) => (
                     <button key={label} onClick={action}
@@ -951,8 +950,8 @@ export default function AdminPanel() {
           {/* ──────────── COURSES ──────────── */}
           {tab==='courses' && <CourseManager/>}
 
-          {/* ──────────── ANALYTICS ──────────── */}
-          {tab==='analytics' && <AnalyticsDashboard/>}
+          {/* ──────────── ANALYTICS (Disabled until Google Analytics ID is added) ──────────── */}
+          {/* {tab==='analytics' && <AnalyticsDashboard/>} */}
 
           {/* ──────────── SEO ──────────── */}
           {tab==='seo' && (
