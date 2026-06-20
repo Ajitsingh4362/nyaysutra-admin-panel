@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Plus, Trash2, Edit3, X, Save, RefreshCw, Award, Search,
-  Download, FileImage, FileText as FileTextIcon, Eye, Printer, CheckCircle
+  Download, FileImage, Eye
 } from 'lucide-react';
 import CertificateTemplate, { CertificateData } from './CertificateTemplate';
 
@@ -36,76 +36,35 @@ const COURSE_TYPES = [
 const GRADES = ['Successfully Completed', 'A+ (Outstanding)', 'A (Excellent)', 'B+ (Very Good)', 'B (Good)', 'Distinction', 'Merit'];
 
 // ── Export helpers ─────────────────────────────────────────────
-// IMPORTANT: html2canvas is unreliable when capturing elements that are
-// either (a) positioned off-screen (e.g. left: -99999px) or (b) wrapped
-// in a CSS `transform: scale()`. On many mobile browsers this produced
-// either fully blank exports or overlapping/misplaced text.
-//
-// The reliable approach: capture the certificate while it is fully
-// visible, in-flow, and rendered at its true 1:1 size (no transform).
-// We do this by briefly setting the preview's scale to 1 (forcing a
-// real layout reflow at full size), capturing it, then restoring the
-// original on-screen scale — all within a few hundred milliseconds,
-// so the user barely notices a flicker.
-function wait(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function captureAtFullSize(
-  node: HTMLElement,
-  setScale: (n: number) => void,
-  originalScale: number
-) {
+// The certificate node passed here is ALWAYS rendered at its true,
+// unscaled 1754x1240 size, fully attached to the document and visible
+// (inside a scrollable box — never CSS-transformed, never positioned
+// off-screen). This is the most reliable pattern for html2canvas across
+// browsers, including mobile Chrome/Safari.
+async function captureNode(node: HTMLElement) {
   const html2canvas = (await import('html2canvas')).default;
-
-  // Force the node to render at true 1:1 scale before capture.
-  setScale(1);
-  // Wait two animation frames + a short delay so the browser actually
-  // repaints at the new (unscaled) size before html2canvas reads it.
-  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-  await wait(120);
-
-  let canvas: HTMLCanvasElement;
-  try {
-    canvas = await html2canvas(node, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#FCFAF4',
-      width: 1754,
-      height: 1240,
-      logging: false,
-    });
-  } finally {
-    // Always restore the original preview scale, even if capture throws.
-    setScale(originalScale);
-  }
-
-  return canvas;
+  return html2canvas(node, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#FCFAF4',
+    width: 1754,
+    height: 1240,
+    logging: false,
+  });
 }
 
-async function exportAsPNG(
-  node: HTMLElement,
-  filename: string,
-  setScale: (n: number) => void,
-  originalScale: number
-) {
-  const canvas = await captureAtFullSize(node, setScale, originalScale);
+async function exportAsPNG(node: HTMLElement, filename: string) {
+  const canvas = await captureNode(node);
   const link = document.createElement('a');
   link.download = `${filename}.png`;
   link.href = canvas.toDataURL('image/png');
   link.click();
 }
 
-async function exportAsPDF(
-  node: HTMLElement,
-  filename: string,
-  setScale: (n: number) => void,
-  originalScale: number
-) {
-  const canvas = await captureAtFullSize(node, setScale, originalScale);
+async function exportAsPDF(node: HTMLElement, filename: string) {
+  const canvas = await captureNode(node);
   const { jsPDF } = await import('jspdf');
   const imgData = canvas.toDataURL('image/png');
-  // A4 landscape: 297mm x 210mm
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
   pdf.addImage(imgData, 'PNG', 0, 0, 297, 210);
   pdf.save(`${filename}.pdf`);
@@ -117,28 +76,7 @@ function CertificateForm({ cert, onSave, onCancel }: { cert: Certificate | null;
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState<'pdf' | 'png' | null>(null);
   const [msg, setMsg] = useState('');
-  const previewRef = useRef<HTMLDivElement>(null);
-  const previewBoxRef = useRef<HTMLDivElement>(null);
-  const [previewScale, setPreviewScale] = useState(0.2);
-
-  // Recalculate the preview scale whenever the container is resized
-  // (window resize, orientation change, sidebar collapse, etc.) so the
-  // certificate always fits its box exactly — no overlap, no clipping.
-  useEffect(() => {
-    const box = previewBoxRef.current;
-    if (!box) return;
-    const CERT_WIDTH = 1754;
-
-    const updateScale = () => {
-      const boxWidth = box.getBoundingClientRect().width;
-      if (boxWidth > 0) setPreviewScale(boxWidth / CERT_WIDTH);
-    };
-
-    updateScale();
-    const observer = new ResizeObserver(updateScale);
-    observer.observe(box);
-    return () => observer.disconnect();
-  }, []);
+  const certRef = useRef<HTMLDivElement>(null);
 
   const setF = (k: keyof Certificate, v: any) => setForm(p => ({ ...p, [k]: v }));
 
@@ -160,20 +98,18 @@ function CertificateForm({ cert, onSave, onCancel }: { cert: Certificate | null;
   };
 
   const handleExport = async (type: 'pdf' | 'png') => {
-    if (!previewRef.current) return;
+    if (!certRef.current) return;
     if (!form.studentName.trim()) { setMsg('⚠️ Fill in student name before exporting.'); return; }
-    // Auto-save first if not saved yet
     if (!form._id) {
       await handleSave();
     }
     setExporting(type);
     const filename = `Certificate_${form.studentName.replace(/\s+/g, '_')}_${form.certificateNumber || Date.now()}`;
     try {
-      if (type === 'pdf') await exportAsPDF(previewRef.current, filename, setPreviewScale, previewScale);
-      else await exportAsPNG(previewRef.current, filename, setPreviewScale, previewScale);
+      if (type === 'pdf') await exportAsPDF(certRef.current, filename);
+      else await exportAsPNG(certRef.current, filename);
     } catch (e) {
       setMsg('Export failed — please try again.');
-      setPreviewScale(previewScale); // ensure scale is restored even on outer failure
     }
     setExporting(null);
   };
@@ -280,30 +216,23 @@ function CertificateForm({ cert, onSave, onCancel }: { cert: Certificate | null;
           </div>
         </div>
 
-        {/* Live Preview — responsive scaling via ResizeObserver (works correctly on all screen sizes).
-            This SAME visible node is also used for PNG/PDF export: at export time its scale is
-            briefly set to 1 (full size, in-flow, fully visible) so html2canvas captures it
-            reliably, then the scale is restored. This avoids the blank/overlapping export bugs
-            caused by capturing off-screen or CSS-transformed elements on mobile browsers. */}
+        {/* Preview / Export source — ONE real, visible, unscaled certificate node
+            shown inside a scrollable box using CSS `zoom` (a real browser
+            rendering feature that shrinks display size WITHOUT affecting the
+            element's actual layout/size, unlike `transform: scale()`). No
+            JS-calculated scale, no ResizeObserver — so it both displays AND
+            exports correctly and consistently on every device. */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-sm flex items-center gap-2"><Eye size={14} className="text-[var(--gold)]" /> Live Preview</h3>
-            <span className="text-[10px] text-[var(--muted2)]">Scaled preview — exports at full print quality</span>
+            <h3 className="font-semibold text-sm flex items-center gap-2"><Eye size={14} className="text-[var(--gold)]" /> Certificate Preview</h3>
+            <span className="text-[10px] text-[var(--muted2)]">Scroll to view · exports at full print quality</span>
           </div>
           <div
-            ref={previewBoxRef}
-            className="rounded-2xl overflow-hidden border border-[rgba(201,168,76,0.2)] bg-[#0a0a0a] relative"
-            style={{ width: '100%', aspectRatio: '1754 / 1240' }}
+            className="rounded-2xl border border-[rgba(201,168,76,0.2)] bg-[#0a0a0a]"
+            style={{ width: '100%', overflow: 'auto', maxHeight: '70vh' }}
           >
-            <div
-              style={{
-                width: 1754,
-                height: 1240,
-                transform: `scale(${previewScale})`,
-                transformOrigin: 'top left',
-              }}
-            >
-              <CertificateTemplate ref={previewRef} data={form} />
+            <div style={{ zoom: 0.32, width: 1754 } as React.CSSProperties}>
+              <CertificateTemplate ref={certRef} data={form} />
             </div>
           </div>
         </div>
