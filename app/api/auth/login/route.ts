@@ -14,6 +14,12 @@ export const POST = withErrorHandling(async (req: Request) => {
   }
   const token = signToken({ email, role: 'admin' });
   const res = NextResponse.json({ success: true });
-  res.cookies.set('admin_token', token, { httpOnly: true, maxAge: 60 * 60 * 24 * 7, path: '/' });
+  res.cookies.set('admin_token', token, {
+    httpOnly: true,
+    maxAge: 60 * 60 * 24 * 7,
+    path: '/',
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  });
   return res;
 });

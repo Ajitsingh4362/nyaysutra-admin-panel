@@ -497,6 +497,7 @@ function BlogForm({ blog, onSave, onCancel }: {
 // ─── MAIN ADMIN ──────────────────────────────────────────────────────
 export default function AdminPanel() {
   const [authed, setAuthed]     = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
   const [email, setEmail]       = useState('');
   const [pass, setPass]         = useState('');
   const [loginErr, setLoginErr] = useState('');
@@ -509,6 +510,17 @@ export default function AdminPanel() {
   const [blogSearch, setBlogSearch] = useState('');
   const [inqFilter, setInqFilter]   = useState('all');
   const [inqSearch, setInqSearch]   = useState('');
+
+  // On mount (including after a page refresh), check whether a valid
+  // admin_token cookie already exists. If it does, restore the session
+  // instead of forcing the user back to the login screen.
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then(r => r.ok ? r.json() : { authed: false })
+      .then(data => setAuthed(!!data.authed))
+      .catch(() => setAuthed(false))
+      .finally(() => setCheckingSession(false));
+  }, []);
 
   const loadBlogs = useCallback(async () => {
     setLoading(true);
@@ -593,6 +605,15 @@ export default function AdminPanel() {
     inqNew:    inquiries.filter(i => i.status === 'new').length,
     inqReplied:inquiries.filter(i => i.status === 'replied').length,
   };
+
+  // ── SESSION CHECK (brief loading state while we verify the cookie) ──
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#07090F]">
+        <RefreshCw size={24} className="animate-spin text-[var(--gold)]" />
+      </div>
+    );
+  }
 
   // ── LOGIN PAGE ───────────────────────────────────────────────────
   if (!authed) {
