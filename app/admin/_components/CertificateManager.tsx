@@ -36,37 +36,73 @@ const COURSE_TYPES = [
 const GRADES = ['Successfully Completed', 'A+ (Outstanding)', 'A (Excellent)', 'B+ (Very Good)', 'B (Good)', 'Distinction', 'Merit'];
 
 // ── Export helpers ─────────────────────────────────────────────
-// IMPORTANT: html2canvas must capture the certificate at its true, unscaled
-// 1754x1240 size. Capturing a CSS-`transform: scale()`'d element causes
-// text/element positions to be computed incorrectly on many mobile browsers
-// (this caused the overlapping-text bug). To avoid this we always render a
-// second, hidden, full-size copy of the certificate purely for export, and
-// keep the visible on-screen preview completely separate (scaled only via
-// a responsive aspect-ratio box — never via CSS transform).
-async function captureNode(node: HTMLElement) {
-  const html2canvas = (await import('html2canvas')).default;
-  return html2canvas(node, {
-    scale: 2,
-    useCORS: true,
-    backgroundColor: '#FCFAF4',
-    width: 1754,
-    height: 1240,
-    windowWidth: 1754,
-    windowHeight: 1240,
-    logging: false,
-  });
+// IMPORTANT: html2canvas is unreliable when capturing elements that are
+// either (a) positioned off-screen (e.g. left: -99999px) or (b) wrapped
+// in a CSS `transform: scale()`. On many mobile browsers this produced
+// either fully blank exports or overlapping/misplaced text.
+//
+// The reliable approach: capture the certificate while it is fully
+// visible, in-flow, and rendered at its true 1:1 size (no transform).
+// We do this by briefly setting the preview's scale to 1 (forcing a
+// real layout reflow at full size), capturing it, then restoring the
+// original on-screen scale — all within a few hundred milliseconds,
+// so the user barely notices a flicker.
+function wait(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function exportAsPNG(node: HTMLElement, filename: string) {
-  const canvas = await captureNode(node);
+async function captureAtFullSize(
+  node: HTMLElement,
+  setScale: (n: number) => void,
+  originalScale: number
+) {
+  const html2canvas = (await import('html2canvas')).default;
+
+  // Force the node to render at true 1:1 scale before capture.
+  setScale(1);
+  // Wait two animation frames + a short delay so the browser actually
+  // repaints at the new (unscaled) size before html2canvas reads it.
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await wait(120);
+
+  let canvas: HTMLCanvasElement;
+  try {
+    canvas = await html2canvas(node, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#FCFAF4',
+      width: 1754,
+      height: 1240,
+      logging: false,
+    });
+  } finally {
+    // Always restore the original preview scale, even if capture throws.
+    setScale(originalScale);
+  }
+
+  return canvas;
+}
+
+async function exportAsPNG(
+  node: HTMLElement,
+  filename: string,
+  setScale: (n: number) => void,
+  originalScale: number
+) {
+  const canvas = await captureAtFullSize(node, setScale, originalScale);
   const link = document.createElement('a');
   link.download = `${filename}.png`;
   link.href = canvas.toDataURL('image/png');
   link.click();
 }
 
-async function exportAsPDF(node: HTMLElement, filename: string) {
-  const canvas = await captureNode(node);
+async function exportAsPDF(
+  node: HTMLElement,
+  filename: string,
+  setScale: (n: number) => void,
+  originalScale: number
+) {
+  const canvas = await captureAtFullSize(node, setScale, originalScale);
   const { jsPDF } = await import('jspdf');
   const imgData = canvas.toDataURL('image/png');
   // A4 landscape: 297mm x 210mm
@@ -133,10 +169,11 @@ function CertificateForm({ cert, onSave, onCancel }: { cert: Certificate | null;
     setExporting(type);
     const filename = `Certificate_${form.studentName.replace(/\s+/g, '_')}_${form.certificateNumber || Date.now()}`;
     try {
-      if (type === 'pdf') await exportAsPDF(previewRef.current, filename);
-      else await exportAsPNG(previewRef.current, filename);
+      if (type === 'pdf') await exportAsPDF(previewRef.current, filename, setPreviewScale, previewScale);
+      else await exportAsPNG(previewRef.current, filename, setPreviewScale, previewScale);
     } catch (e) {
       setMsg('Export failed — please try again.');
+      setPreviewScale(previewScale); // ensure scale is restored even on outer failure
     }
     setExporting(null);
   };
@@ -243,7 +280,11 @@ function CertificateForm({ cert, onSave, onCancel }: { cert: Certificate | null;
           </div>
         </div>
 
-        {/* Live Preview — responsive scaling via ResizeObserver (works correctly on all screen sizes) */}
+        {/* Live Preview — responsive scaling via ResizeObserver (works correctly on all screen sizes).
+            This SAME visible node is also used for PNG/PDF export: at export time its scale is
+            briefly set to 1 (full size, in-flow, fully visible) so html2canvas captures it
+            reliably, then the scale is restored. This avoids the blank/overlapping export bugs
+            caused by capturing off-screen or CSS-transformed elements on mobile browsers. */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-sm flex items-center gap-2"><Eye size={14} className="text-[var(--gold)]" /> Live Preview</h3>
@@ -254,39 +295,18 @@ function CertificateForm({ cert, onSave, onCancel }: { cert: Certificate | null;
             className="rounded-2xl overflow-hidden border border-[rgba(201,168,76,0.2)] bg-[#0a0a0a] relative"
             style={{ width: '100%', aspectRatio: '1754 / 1240' }}
           >
-            {/* Visible preview: scaled to fit the box width exactly, recalculated on resize */}
             <div
               style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
                 width: 1754,
                 height: 1240,
                 transform: `scale(${previewScale})`,
                 transformOrigin: 'top left',
               }}
             >
-              <CertificateTemplate data={form} />
+              <CertificateTemplate ref={previewRef} data={form} />
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Hidden, always full-size (1754x1240, unscaled) certificate — used ONLY for PNG/PDF export.
-          Capturing an unscaled, off-screen node avoids the CSS-transform + html2canvas
-          overlapping-text bug seen on some mobile browsers. */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: '-99999px',
-          width: 1754,
-          height: 1240,
-          pointerEvents: 'none',
-        }}
-        aria-hidden="true"
-      >
-        <CertificateTemplate ref={previewRef} data={form} />
       </div>
     </div>
   );
