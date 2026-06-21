@@ -1,24 +1,18 @@
 'use client';
-import { Document, Page, View, Text, Image, StyleSheet, Font } from '@react-pdf/renderer';
+import { Document, Page, View, Text, Image, StyleSheet } from '@react-pdf/renderer';
 import type { CertificateData } from './CertificateTemplate';
 
-// Register premium serif fonts for a more institutional look.
-// (Falls back to Times-Roman built-in if the network fetch fails, which
-// @react-pdf/renderer handles gracefully.)
-Font.register({
-  family: 'PlayfairDisplay',
-  fonts: [
-    { src: 'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf', fontWeight: 400 },
-    { src: 'https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXBzAwcbmjWBN2PKdFvUDQZNLo_U2r.ttf', fontWeight: 700 },
-  ],
-});
-Font.register({
-  family: 'DMSans',
-  fonts: [
-    { src: 'https://fonts.gstatic.com/s/dmsans/v15/rP2tp2ywxg089UriCZOIHQ.ttf', fontWeight: 400 },
-    { src: 'https://fonts.gstatic.com/s/dmsans/v15/rP2Hp2ywxg089UriCZaIGTQ8aOM.ttf', fontWeight: 700 },
-  ],
-});
+// IMPORTANT: Do NOT use Font.register() with external Google Fonts URLs here.
+// Those URLs are version-hashed and Google periodically changes/expires them
+// without notice, which previously caused hard 404 failures during
+// certificate generation (this is the second time this exact class of bug
+// has occurred). Instead, we rely entirely on @react-pdf/renderer's 14
+// built-in, zero-network-dependency PDF base fonts (Times-Roman / Helvetica
+// and their Bold/Italic/BoldItalic variants). These are embedded in the
+// PDF spec itself and can never fail to load.
+//   - 'Times-Roman' family (with weight 700 → bold) gives the certificate
+//     its elegant serif, institutional look in place of Playfair Display.
+//   - 'Helvetica' gives the clean sans-serif body text in place of DM Sans.
 
 const GOLD = '#9C7A2E';
 const GOLD_LIGHT = '#C9A84C';
@@ -30,7 +24,7 @@ const BG = '#FCFAF4';
 const styles = StyleSheet.create({
   page: {
     backgroundColor: BG,
-    fontFamily: 'DMSans',
+    fontFamily: 'Helvetica',
     padding: 0,
     position: 'relative',
   },
@@ -71,8 +65,7 @@ const styles = StyleSheet.create({
   },
   logo: { width: 70, height: 70, objectFit: 'contain', marginBottom: 4 },
   orgName: {
-    fontFamily: 'PlayfairDisplay',
-    fontWeight: 700,
+    fontFamily: 'Times-Bold',
     fontSize: 11,
     letterSpacing: 3,
     color: GOLD,
@@ -82,23 +75,21 @@ const styles = StyleSheet.create({
   tagline: { fontSize: 8, color: MUTED, letterSpacing: 1, marginTop: 2 },
   divider: { width: 100, height: 1.5, backgroundColor: GOLD_LIGHT, marginVertical: 14 },
   certType: {
+    fontFamily: 'Helvetica-Bold',
     fontSize: 10,
     letterSpacing: 3,
     color: GOLD,
-    fontWeight: 700,
     textTransform: 'uppercase',
   },
   mainTitle: {
-    fontFamily: 'PlayfairDisplay',
-    fontWeight: 700,
+    fontFamily: 'Times-Bold',
     fontSize: 32,
     color: INK,
     marginTop: 6,
   },
   certifyText: { fontSize: 12, color: MUTED, marginTop: 22, letterSpacing: 0.5 },
   studentName: {
-    fontFamily: 'PlayfairDisplay',
-    fontWeight: 700,
+    fontFamily: 'Times-Bold',
     fontSize: 27,
     color: '#7A5E20',
     marginTop: 8,
@@ -117,8 +108,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     maxWidth: 560,
   },
-  bold: { fontWeight: 700, color: '#7A5E20' },
-  grade: { fontSize: 11, color: '#7A5E20', fontWeight: 700, marginTop: 10, letterSpacing: 0.5 },
+  bold: { fontFamily: 'Helvetica-Bold', color: '#7A5E20' },
+  grade: { fontFamily: 'Helvetica-Bold', fontSize: 11, color: '#7A5E20', marginTop: 10, letterSpacing: 0.5 },
   remarks: { fontSize: 9, color: MUTED, marginTop: 6, letterSpacing: 0.3, textAlign: 'center', maxWidth: 480 },
   footerRow: {
     flexDirection: 'row',
@@ -130,8 +121,8 @@ const styles = StyleSheet.create({
   },
   footerBlock: { alignItems: 'center', minWidth: 140 },
   footerValue: {
+    fontFamily: 'Helvetica-Bold',
     fontSize: 11,
-    fontWeight: 700,
     color: INK,
     borderTopWidth: 1,
     borderTopColor: GOLD,
@@ -161,10 +152,9 @@ const styles = StyleSheet.create({
   },
   sealText: { fontSize: 6, color: GOLD, textAlign: 'center' },
   signature: {
-    fontFamily: 'PlayfairDisplay',
+    fontFamily: 'Times-Bold',
     fontSize: 18,
     color: '#1A1208',
-    fontWeight: 700,
   },
   certNumber: { fontSize: 7, color: MUTED2, letterSpacing: 0.5, marginTop: 12 },
 });
