@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import {
-  Plus, Trash2, Edit3, X, Save, RefreshCw, Award, Search, Download
+  Plus, Trash2, Edit3, X, Save, RefreshCw, Award, Search, Download, Link2, CheckCircle2
 } from 'lucide-react';
 import type { CertificateData } from './CertificateTemplate';
 
@@ -273,7 +273,7 @@ export default function CertificateManager() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const r = await fetch('/api/certificates');
+      const r = await fetch('/api/certificates?admin=1');
       const d = await r.json();
       setItems(Array.isArray(d) ? d : []);
     } catch { setItems([]); }
@@ -286,6 +286,19 @@ export default function CertificateManager() {
     if (!confirm('Delete this certificate record permanently?')) return;
     await fetch(`/api/certificates/${id}`, { method: 'DELETE' });
     load();
+  };
+
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const copyVerifyLink = async (certificateNumber?: string) => {
+    if (!certificateNumber) return;
+    const url = `${window.location.origin}/verify?number=${encodeURIComponent(certificateNumber)}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedId(certificateNumber);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      window.prompt('Copy this verification link:', url);
+    }
   };
 
   const filtered = items.filter(i =>
@@ -341,6 +354,9 @@ export default function CertificateManager() {
                     <td><span className="text-xs text-[var(--muted2)]">{c.issueDate ? new Date(c.issueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}</span></td>
                     <td>
                       <div className="flex items-center gap-1">
+                        <button onClick={() => copyVerifyLink(c.certificateNumber)} className="tb-btn" title={copiedId === c.certificateNumber ? 'Copied!' : 'Copy verification link'}>
+                          {copiedId === c.certificateNumber ? <CheckCircle2 size={13} className="text-green-400"/> : <Link2 size={13} />}
+                        </button>
                         <button onClick={() => { setEditing(c); setView('form'); }} className="tb-btn" title="Edit / Re-download"><Edit3 size={13} /></button>
                         <button onClick={() => del(c._id!)} className="tb-btn text-red-400 hover:bg-red-500/10" title="Delete"><Trash2 size={13} /></button>
                       </div>

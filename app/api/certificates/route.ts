@@ -2,23 +2,45 @@ import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Certificate from '@/lib/models/Certificate';
 import { withErrorHandling } from '@/lib/apiHandler';
+import { getAdminFromCookie } from '@/lib/auth';
 
 export const GET = withErrorHandling(async (req: Request) => {
   await connectDB();
   const { searchParams } = new URL(req.url);
   const certNumber = searchParams.get('number');
+  const isAdmin = searchParams.get('admin') === '1';
 
   if (certNumber) {
-    // Used for public verification lookups
-    const cert = await Certificate.findOne({ certificateNumber: certNumber, status: 'active' }).lean();
+    // Public verification lookup — only active certificates, and only the
+    // fields needed to display a verification result (no internal record
+    // id, timestamps, etc.)
+    const cert = await Certificate.findOne(
+      { certificateNumber: certNumber.trim(), status: 'active' },
+      'certificateNumber studentName courseName courseType duration startDate endDate grade issueDate signatoryName signatoryDesignation status'
+    ).lean();
     return NextResponse.json(cert || null);
   }
 
-  const certs = await Certificate.find().sort({ createdAt: -1 }).lean();
-  return NextResponse.json(certs);
+  // Full certificate list (with student names, dates, etc.) is sensitive
+  // student data — only return it to an authenticated admin session.
+  if (isAdmin) {
+    const admin = getAdminFromCookie();
+    if (!admin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const certs = await Certificate.find().sort({ createdAt: -1 }).lean();
+    return NextResponse.json(certs);
+  }
+
+  return NextResponse.json({ error: 'A certificate number is required.' }, { status: 400 });
 });
 
 export const POST = withErrorHandling(async (req: Request) => {
+  const admin = getAdminFromCookie();
+  if (!admin) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   await connectDB();
   const body = await req.json();
   if (!body.studentName || !body.courseName) {

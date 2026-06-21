@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/gallery`, priority: 0.7 },
     { url: `${base}/blog`, priority: 0.8 },
     { url: `${base}/contact`, priority: 0.8 },
+    { url: `${base}/verify`, priority: 0.5 },
     { url: `${base}/practice-areas/supreme-court`, priority: 0.8 },
     { url: `${base}/practice-areas/high-court`, priority: 0.8 },
     { url: `${base}/practice-areas/criminal-law`, priority: 0.8 },
