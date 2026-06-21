@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     color: INK,
     marginTop: 6,
   },
-  certifyText: { fontSize: 12, color: MUTED, marginTop: 22, fontStyle: 'italic' },
+  certifyText: { fontSize: 12, color: MUTED, marginTop: 22, letterSpacing: 0.5 },
   studentName: {
     fontFamily: 'PlayfairDisplay',
     fontWeight: 700,
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   bold: { fontWeight: 700, color: '#7A5E20' },
   grade: { fontSize: 11, color: '#7A5E20', fontWeight: 700, marginTop: 10, letterSpacing: 0.5 },
-  remarks: { fontSize: 9, color: MUTED, marginTop: 6, fontStyle: 'italic', textAlign: 'center', maxWidth: 480 },
+  remarks: { fontSize: 9, color: MUTED, marginTop: 6, letterSpacing: 0.3, textAlign: 'center', maxWidth: 480 },
   footerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -163,7 +163,6 @@ const styles = StyleSheet.create({
   signature: {
     fontFamily: 'PlayfairDisplay',
     fontSize: 18,
-    fontStyle: 'italic',
     color: '#1A1208',
     fontWeight: 700,
   },
