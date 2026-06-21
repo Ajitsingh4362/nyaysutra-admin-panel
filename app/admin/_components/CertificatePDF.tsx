@@ -96,8 +96,10 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     borderBottomWidth: 1,
     borderBottomColor: GOLD_LIGHT,
-    minWidth: 320,
+    width: '100%',
+    maxWidth: 420,
     textAlign: 'center',
+    alignSelf: 'center',
   },
   fatherName: { fontSize: 9, color: MUTED, marginTop: 4 },
   bodyText: {
@@ -223,7 +225,7 @@ export default function CertificatePDF({ data }: { data: CertificateData }) {
           </View>
 
           <Text style={styles.certNumber}>
-            Certificate No: {data.certificateNumber || 'NS-CERT-XXXX-0000'}   |   Verify at nyayasutra.com/verify
+            Certificate No: {data.certificateNumber || 'NS-CERT-XXXX-0000'}   |   Verify at nyayasutra.org/verify
           </Text>
         </View>
       </Page>

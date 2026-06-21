@@ -279,7 +279,7 @@ const CertificateTemplate = forwardRef<HTMLDivElement, { data: CertificateData }
         {/* Certificate number footer */}
         <p style={{ fontSize: 11, color: '#8A7A5E', letterSpacing: '0.1em', marginTop: 18 }}>
           Certificate No: <strong style={{ color: '#5A4E3C' }}>{data.certificateNumber || 'NS-CERT-XXXX-0000'}</strong>
-          &nbsp;&nbsp;|&nbsp;&nbsp; Verify at nyayasutra.com/verify
+          &nbsp;&nbsp;|&nbsp;&nbsp; Verify at nyayasutra.org/verify
         </p>
       </div>
     </div>
