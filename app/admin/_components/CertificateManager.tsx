@@ -1,9 +1,10 @@
 'use client';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Plus, Trash2, Edit3, X, Save, RefreshCw, Award, Search,
-  Download, FileImage, Eye
+  Download, FileImage
 } from 'lucide-react';
+import { createRoot } from 'react-dom/client';
 import CertificateTemplate, { CertificateData } from './CertificateTemplate';
 
 interface Certificate extends CertificateData {
@@ -35,15 +36,43 @@ const COURSE_TYPES = [
 
 const GRADES = ['Successfully Completed', 'A+ (Outstanding)', 'A (Excellent)', 'B+ (Very Good)', 'B (Good)', 'Distinction', 'Merit'];
 
-// ── Export helpers ─────────────────────────────────────────────
-// The certificate node passed here is ALWAYS rendered at its true,
-// unscaled 1754x1240 size, fully attached to the document and visible
-// (inside a scrollable box — never CSS-transformed, never positioned
-// off-screen). This is the most reliable pattern for html2canvas across
-// browsers, including mobile Chrome/Safari.
-async function captureNode(node: HTMLElement) {
+function wait(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Renders the certificate into a brand-new, temporary container that is
+ * attached to the document body (normal in-flow, zero CSS transform, zero
+ * `position: fixed`/off-screen tricks, zero `zoom`), waits for it to fully
+ * paint, captures it with html2canvas, then removes the container.
+ *
+ * No "preview" is kept mounted at any time — there is nothing to go stale,
+ * nothing to mis-scale, nothing to overlap. This is the simplest possible
+ * approach and avoids every failure mode hit previously.
+ */
+async function renderAndCapture(data: CertificateData): Promise<HTMLCanvasElement> {
+  const container = document.createElement('div');
+  container.style.position = 'absolute';
+  container.style.top = '0';
+  container.style.left = '0';
+  // Push it below everything visually without using off-screen/negative
+  // positioning or display:none (both of which can confuse capture tools).
+  container.style.zIndex = '-1';
+  container.style.opacity = '0';
+  container.style.pointerEvents = 'none';
+  document.body.appendChild(container);
+
+  const root = createRoot(container);
+  root.render(<CertificateTemplate data={data} />);
+
+  // Wait for React to commit + the browser to actually paint the node
+  // (fonts, layout, etc.) before handing it to html2canvas.
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await wait(150);
+
+  const target = container.firstElementChild as HTMLElement;
   const html2canvas = (await import('html2canvas')).default;
-  return html2canvas(node, {
+  const canvas = await html2canvas(target, {
     scale: 2,
     useCORS: true,
     backgroundColor: '#FCFAF4',
@@ -51,18 +80,23 @@ async function captureNode(node: HTMLElement) {
     height: 1240,
     logging: false,
   });
+
+  root.unmount();
+  document.body.removeChild(container);
+
+  return canvas;
 }
 
-async function exportAsPNG(node: HTMLElement, filename: string) {
-  const canvas = await captureNode(node);
+async function exportAsPNG(data: CertificateData, filename: string) {
+  const canvas = await renderAndCapture(data);
   const link = document.createElement('a');
   link.download = `${filename}.png`;
   link.href = canvas.toDataURL('image/png');
   link.click();
 }
 
-async function exportAsPDF(node: HTMLElement, filename: string) {
-  const canvas = await captureNode(node);
+async function exportAsPDF(data: CertificateData, filename: string) {
+  const canvas = await renderAndCapture(data);
   const { jsPDF } = await import('jspdf');
   const imgData = canvas.toDataURL('image/png');
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
@@ -76,7 +110,6 @@ function CertificateForm({ cert, onSave, onCancel }: { cert: Certificate | null;
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState<'pdf' | 'png' | null>(null);
   const [msg, setMsg] = useState('');
-  const certRef = useRef<HTMLDivElement>(null);
 
   const setF = (k: keyof Certificate, v: any) => setForm(p => ({ ...p, [k]: v }));
 
@@ -98,16 +131,20 @@ function CertificateForm({ cert, onSave, onCancel }: { cert: Certificate | null;
   };
 
   const handleExport = async (type: 'pdf' | 'png') => {
-    if (!certRef.current) return;
     if (!form.studentName.trim()) { setMsg('⚠️ Fill in student name before exporting.'); return; }
+    if (!form.courseName.trim()) { setMsg('⚠️ Fill in course name before exporting.'); return; }
+
+    let dataForExport = form;
     if (!form._id) {
       await handleSave();
     }
+
     setExporting(type);
     const filename = `Certificate_${form.studentName.replace(/\s+/g, '_')}_${form.certificateNumber || Date.now()}`;
     try {
-      if (type === 'pdf') await exportAsPDF(certRef.current, filename);
-      else await exportAsPNG(certRef.current, filename);
+      if (type === 'pdf') await exportAsPDF(dataForExport, filename);
+      else await exportAsPNG(dataForExport, filename);
+      setMsg(`✓ ${type.toUpperCase()} downloaded!`);
     } catch (e) {
       setMsg('Export failed — please try again.');
     }
@@ -115,126 +152,108 @@ function CertificateForm({ cert, onSave, onCancel }: { cert: Certificate | null;
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-2xl mx-auto">
       {/* Top bar */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <button onClick={onCancel} className="flex items-center gap-2 text-xs text-[var(--muted2)] hover:text-[var(--ivory)] transition-colors"><X size={14} /> Back to List</button>
         <div className="flex items-center gap-2 flex-wrap">
           {msg && <span className={`text-xs px-3 py-1.5 rounded-xl ${msg.startsWith('✓') ? 'bg-green-500/15 text-green-300' : 'bg-red-500/15 text-red-300'}`}>{msg}</span>}
-          <button onClick={handleSave} disabled={saving} className="btn-outline text-xs py-2 px-4">
-            {saving ? <RefreshCw size={12} className="animate-spin" /> : <Save size={12} />} Save
-          </button>
-          <button onClick={() => handleExport('png')} disabled={exporting !== null} className="btn-outline text-xs py-2 px-4">
-            {exporting === 'png' ? <RefreshCw size={12} className="animate-spin" /> : <FileImage size={12} />} PNG
-          </button>
-          <button onClick={() => handleExport('pdf')} disabled={exporting !== null} className="btn-gold text-xs py-2 px-5">
-            {exporting === 'pdf' ? <RefreshCw size={12} className="animate-spin" /> : <Download size={12} />} Download PDF
-          </button>
         </div>
       </div>
 
-      <div className="grid xl:grid-cols-[420px_1fr] gap-6">
-        {/* Form */}
-        <div className="space-y-4">
-          <div className="card space-y-4">
-            <h3 className="font-semibold text-sm flex items-center gap-2"><Award size={14} className="text-[var(--gold)]" /> Student & Course Details</h3>
+      <div className="card space-y-4">
+        <h3 className="font-semibold text-sm flex items-center gap-2"><Award size={14} className="text-[var(--gold)]" /> Student & Course Details</h3>
 
-            <div>
-              <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Student Full Name *</label>
-              <input value={form.studentName} onChange={e => setF('studentName', e.target.value)} className="input text-sm" placeholder="e.g. Rahul Kumar Sharma" />
-            </div>
+        <div>
+          <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Student Full Name *</label>
+          <input value={form.studentName} onChange={e => setF('studentName', e.target.value)} className="input text-sm" placeholder="e.g. Rahul Kumar Sharma" />
+        </div>
 
-            <div>
-              <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Father's / Mother's Name</label>
-              <input value={form.fatherName} onChange={e => setF('fatherName', e.target.value)} className="input text-sm" placeholder="e.g. Mr. Suresh Sharma" />
-            </div>
+        <div>
+          <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Father's / Mother's Name</label>
+          <input value={form.fatherName} onChange={e => setF('fatherName', e.target.value)} className="input text-sm" placeholder="e.g. Mr. Suresh Sharma" />
+        </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Certificate Type</label>
-                <select value={form.courseType} onChange={e => setF('courseType', e.target.value)} className="input text-sm">
-                  {COURSE_TYPES.map(t => <option key={t}>{t}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Grade / Result</label>
-                <select value={form.grade} onChange={e => setF('grade', e.target.value)} className="input text-sm">
-                  {GRADES.map(g => <option key={g}>{g}</option>)}
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Course / Internship Name *</label>
-              <input value={form.courseName} onChange={e => setF('courseName', e.target.value)} className="input text-sm" placeholder="e.g. Legal Research & Drafting Internship" />
-            </div>
-
-            <div>
-              <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Duration (display text)</label>
-              <input value={form.duration} onChange={e => setF('duration', e.target.value)} className="input text-sm" placeholder="e.g. 3 Months / 90 Hours" />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Start Date</label>
-                <input type="date" value={form.startDate} onChange={e => setF('startDate', e.target.value)} className="input text-sm" />
-              </div>
-              <div>
-                <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">End Date</label>
-                <input type="date" value={form.endDate} onChange={e => setF('endDate', e.target.value)} className="input text-sm" />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Issue Date</label>
-              <input type="date" value={form.issueDate} onChange={e => setF('issueDate', e.target.value)} className="input text-sm" />
-            </div>
-
-            <div>
-              <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Remarks (optional quote/note)</label>
-              <textarea value={form.remarks} onChange={e => setF('remarks', e.target.value)} className="input text-sm" style={{ minHeight: 60 }} placeholder="e.g. Demonstrated exceptional research and drafting skills." />
-            </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Certificate Type</label>
+            <select value={form.courseType} onChange={e => setF('courseType', e.target.value)} className="input text-sm">
+              {COURSE_TYPES.map(t => <option key={t}>{t}</option>)}
+            </select>
           </div>
-
-          <div className="card space-y-4">
-            <h3 className="font-semibold text-sm">Signatory Details</h3>
-            <div>
-              <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Signatory Name</label>
-              <input value={form.signatoryName} onChange={e => setF('signatoryName', e.target.value)} className="input text-sm" />
-            </div>
-            <div>
-              <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Signatory Designation</label>
-              <input value={form.signatoryDesignation} onChange={e => setF('signatoryDesignation', e.target.value)} className="input text-sm" />
-            </div>
-            {form.certificateNumber && (
-              <div className="p-3 rounded-xl bg-[rgba(201,168,76,0.06)] border border-[rgba(201,168,76,0.15)]">
-                <p className="text-[10px] text-[var(--gold)] font-bold uppercase tracking-wider mb-1">Certificate Number</p>
-                <p className="text-sm font-mono">{form.certificateNumber}</p>
-                <p className="text-[10px] text-[var(--muted2)] mt-1">Auto-generated on save — sequential & unique</p>
-              </div>
-            )}
+          <div>
+            <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Grade / Result</label>
+            <select value={form.grade} onChange={e => setF('grade', e.target.value)} className="input text-sm">
+              {GRADES.map(g => <option key={g}>{g}</option>)}
+            </select>
           </div>
         </div>
 
-        {/* Preview / Export source — ONE real, visible, unscaled certificate node
-            shown inside a scrollable box using CSS `zoom` (a real browser
-            rendering feature that shrinks display size WITHOUT affecting the
-            element's actual layout/size, unlike `transform: scale()`). No
-            JS-calculated scale, no ResizeObserver — so it both displays AND
-            exports correctly and consistently on every device. */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-sm flex items-center gap-2"><Eye size={14} className="text-[var(--gold)]" /> Certificate Preview</h3>
-            <span className="text-[10px] text-[var(--muted2)]">Scroll to view · exports at full print quality</span>
+        <div>
+          <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Course / Internship Name *</label>
+          <input value={form.courseName} onChange={e => setF('courseName', e.target.value)} className="input text-sm" placeholder="e.g. Legal Research & Drafting Internship" />
+        </div>
+
+        <div>
+          <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Duration (display text)</label>
+          <input value={form.duration} onChange={e => setF('duration', e.target.value)} className="input text-sm" placeholder="e.g. 3 Months / 90 Hours" />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Start Date</label>
+            <input type="date" value={form.startDate} onChange={e => setF('startDate', e.target.value)} className="input text-sm" />
           </div>
-          <div
-            className="rounded-2xl border border-[rgba(201,168,76,0.2)] bg-[#0a0a0a]"
-            style={{ width: '100%', overflow: 'auto', maxHeight: '70vh' }}
-          >
-            <div style={{ zoom: 0.32, width: 1754 } as React.CSSProperties}>
-              <CertificateTemplate ref={certRef} data={form} />
-            </div>
+          <div>
+            <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">End Date</label>
+            <input type="date" value={form.endDate} onChange={e => setF('endDate', e.target.value)} className="input text-sm" />
           </div>
+        </div>
+
+        <div>
+          <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Issue Date</label>
+          <input type="date" value={form.issueDate} onChange={e => setF('issueDate', e.target.value)} className="input text-sm" />
+        </div>
+
+        <div>
+          <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Remarks (optional quote/note)</label>
+          <textarea value={form.remarks} onChange={e => setF('remarks', e.target.value)} className="input text-sm" style={{ minHeight: 60 }} placeholder="e.g. Demonstrated exceptional research and drafting skills." />
+        </div>
+      </div>
+
+      <div className="card space-y-4">
+        <h3 className="font-semibold text-sm">Signatory Details</h3>
+        <div>
+          <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Signatory Name</label>
+          <input value={form.signatoryName} onChange={e => setF('signatoryName', e.target.value)} className="input text-sm" />
+        </div>
+        <div>
+          <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider">Signatory Designation</label>
+          <input value={form.signatoryDesignation} onChange={e => setF('signatoryDesignation', e.target.value)} className="input text-sm" />
+        </div>
+        {form.certificateNumber && (
+          <div className="p-3 rounded-xl bg-[rgba(201,168,76,0.06)] border border-[rgba(201,168,76,0.15)]">
+            <p className="text-[10px] text-[var(--gold)] font-bold uppercase tracking-wider mb-1">Certificate Number</p>
+            <p className="text-sm font-mono">{form.certificateNumber}</p>
+            <p className="text-[10px] text-[var(--muted2)] mt-1">Auto-generated on save — sequential & unique</p>
+          </div>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="card space-y-3">
+        <h3 className="font-semibold text-sm">Save & Download</h3>
+        <p className="text-xs text-[var(--muted2)]">Fill in the details above, then save and download the certificate as PNG or PDF. There is no live preview — each download is freshly generated from the form data.</p>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={handleSave} disabled={saving} className="btn-outline text-sm py-2.5 px-5">
+            {saving ? <RefreshCw size={13} className="animate-spin" /> : <Save size={13} />} Save
+          </button>
+          <button onClick={() => handleExport('png')} disabled={exporting !== null} className="btn-outline text-sm py-2.5 px-5">
+            {exporting === 'png' ? <RefreshCw size={13} className="animate-spin" /> : <FileImage size={13} />} Download PNG
+          </button>
+          <button onClick={() => handleExport('pdf')} disabled={exporting !== null} className="btn-gold text-sm py-2.5 px-6">
+            {exporting === 'pdf' ? <RefreshCw size={13} className="animate-spin" /> : <Download size={13} />} Download PDF
+          </button>
         </div>
       </div>
     </div>
@@ -320,7 +339,7 @@ export default function CertificateManager() {
                     <td><span className="text-xs text-[var(--muted2)]">{c.issueDate ? new Date(c.issueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}</span></td>
                     <td>
                       <div className="flex items-center gap-1">
-                        <button onClick={() => { setEditing(c); setView('form'); }} className="tb-btn" title="Edit / Re-export"><Edit3 size={13} /></button>
+                        <button onClick={() => { setEditing(c); setView('form'); }} className="tb-btn" title="Edit / Re-download"><Edit3 size={13} /></button>
                         <button onClick={() => del(c._id!)} className="tb-btn text-red-400 hover:bg-red-500/10" title="Delete"><Trash2 size={13} /></button>
                       </div>
                     </td>
