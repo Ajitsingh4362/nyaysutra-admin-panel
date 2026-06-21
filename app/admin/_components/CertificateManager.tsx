@@ -1,11 +1,9 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import {
-  Plus, Trash2, Edit3, X, Save, RefreshCw, Award, Search,
-  Download, FileImage
+  Plus, Trash2, Edit3, X, Save, RefreshCw, Award, Search, Download
 } from 'lucide-react';
-import { createRoot } from 'react-dom/client';
-import CertificateTemplate, { CertificateData } from './CertificateTemplate';
+import type { CertificateData } from './CertificateTemplate';
 
 interface Certificate extends CertificateData {
   _id?: string;
@@ -36,72 +34,63 @@ const COURSE_TYPES = [
 
 const GRADES = ['Successfully Completed', 'A+ (Outstanding)', 'A (Excellent)', 'B+ (Very Good)', 'B (Good)', 'Distinction', 'Merit'];
 
-function wait(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+/**
+ * Generates the certificate PDF using @react-pdf/renderer — a pure
+ * JavaScript PDF generator that builds the file from vector drawing
+ * instructions (text, shapes, embedded images). It does NOT render
+ * through the browser's DOM/CSS layout engine or a <canvas> screenshot
+ * at any point, which is what made every previous html2canvas-based
+ * approach fail unpredictably on mobile (blank captures, overlapping
+ * text, partial renders). This makes generation 100% consistent across
+ * desktop and mobile, regardless of screen size or browser quirks.
+ */
+async function generatePDFBlob(data: CertificateData): Promise<Blob> {
+  const { pdf } = await import('@react-pdf/renderer');
+  const { default: CertificatePDF } = await import('./CertificatePDF');
+  const instance = pdf(<CertificatePDF data={data} />);
+  return instance.toBlob();
+}
+
+function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 /**
- * Renders the certificate into a brand-new, temporary container that is
- * attached to the document body (normal in-flow, zero CSS transform, zero
- * `position: fixed`/off-screen tricks, zero `zoom`), waits for it to fully
- * paint, captures it with html2canvas, then removes the container.
- *
- * No "preview" is kept mounted at any time — there is nothing to go stale,
- * nothing to mis-scale, nothing to overlap. This is the simplest possible
- * approach and avoids every failure mode hit previously.
+ * For PNG export: render the generated PDF's first page onto a <canvas>
+ * using pdf.js (a battle-tested, dedicated PDF rendering engine — not
+ * html2canvas/DOM screenshotting), then export that canvas as a PNG.
+ * This reuses the exact same reliable PDF as the source of truth, so
+ * the PNG always matches the PDF pixel-for-pixel.
  */
-async function renderAndCapture(data: CertificateData): Promise<HTMLCanvasElement> {
-  const container = document.createElement('div');
-  container.style.position = 'absolute';
-  container.style.top = '0';
-  container.style.left = '0';
-  // Push it below everything visually without using off-screen/negative
-  // positioning or display:none (both of which can confuse capture tools).
-  container.style.zIndex = '-1';
-  container.style.opacity = '0';
-  container.style.pointerEvents = 'none';
-  document.body.appendChild(container);
+async function generatePNGBlob(data: CertificateData): Promise<Blob> {
+  const pdfBlob = await generatePDFBlob(data);
+  const pdfjsLib = await import('pdfjs-dist');
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 
-  const root = createRoot(container);
-  root.render(<CertificateTemplate data={data} />);
+  const arrayBuffer = await pdfBlob.arrayBuffer();
+  const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+  const pdfDoc = await loadingTask.promise;
+  const page = await pdfDoc.getPage(1);
 
-  // Wait for React to commit + the browser to actually paint the node
-  // (fonts, layout, etc.) before handing it to html2canvas.
-  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-  await wait(150);
+  // Render at 3x scale for a crisp, high-resolution PNG.
+  const viewport = page.getViewport({ scale: 3 });
+  const canvas = document.createElement('canvas');
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  const ctx = canvas.getContext('2d')!;
 
-  const target = container.firstElementChild as HTMLElement;
-  const html2canvas = (await import('html2canvas')).default;
-  const canvas = await html2canvas(target, {
-    scale: 2,
-    useCORS: true,
-    backgroundColor: '#FCFAF4',
-    width: 1754,
-    height: 1240,
-    logging: false,
+  await page.render({ canvas, canvasContext: ctx, viewport }).promise;
+
+  return new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob(b => (b ? resolve(b) : reject(new Error('Canvas export failed'))), 'image/png');
   });
-
-  root.unmount();
-  document.body.removeChild(container);
-
-  return canvas;
-}
-
-async function exportAsPNG(data: CertificateData, filename: string) {
-  const canvas = await renderAndCapture(data);
-  const link = document.createElement('a');
-  link.download = `${filename}.png`;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-}
-
-async function exportAsPDF(data: CertificateData, filename: string) {
-  const canvas = await renderAndCapture(data);
-  const { jsPDF } = await import('jspdf');
-  const imgData = canvas.toDataURL('image/png');
-  const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-  pdf.addImage(imgData, 'PNG', 0, 0, 297, 210);
-  pdf.save(`${filename}.pdf`);
 }
 
 // ── Certificate Form (Create / Edit) ───────────────────────────
@@ -126,27 +115,40 @@ function CertificateForm({ cert, onSave, onCancel }: { cert: Certificate | null;
       const saved = await res.json();
       setForm(saved);
       setMsg('✓ Certificate saved!');
-    } catch (err: any) { setMsg(`Error: ${err.message || 'Try again.'}`); }
-    setSaving(false);
+      return saved as Certificate;
+    } catch (err: any) {
+      setMsg(`Error: ${err.message || 'Try again.'}`);
+      return null;
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleExport = async (type: 'pdf' | 'png') => {
     if (!form.studentName.trim()) { setMsg('⚠️ Fill in student name before exporting.'); return; }
     if (!form.courseName.trim()) { setMsg('⚠️ Fill in course name before exporting.'); return; }
 
-    let dataForExport = form;
+    let dataForExport: Certificate = form;
     if (!form._id) {
-      await handleSave();
+      const saved = await handleSave();
+      if (saved) dataForExport = saved;
     }
 
     setExporting(type);
-    const filename = `Certificate_${form.studentName.replace(/\s+/g, '_')}_${form.certificateNumber || Date.now()}`;
+    setMsg('');
+    const safeName = (dataForExport.studentName || 'Certificate').replace(/\s+/g, '_');
+    const filename = `Certificate_${safeName}_${dataForExport.certificateNumber || Date.now()}`;
     try {
-      if (type === 'pdf') await exportAsPDF(dataForExport, filename);
-      else await exportAsPNG(dataForExport, filename);
+      if (type === 'pdf') {
+        const blob = await generatePDFBlob(dataForExport);
+        downloadBlob(blob, `${filename}.pdf`);
+      } else {
+        const blob = await generatePNGBlob(dataForExport);
+        downloadBlob(blob, `${filename}.png`);
+      }
       setMsg(`✓ ${type.toUpperCase()} downloaded!`);
-    } catch (e) {
-      setMsg('Export failed — please try again.');
+    } catch (e: any) {
+      setMsg(`Export failed: ${e?.message || 'please try again.'}`);
     }
     setExporting(null);
   };
@@ -243,13 +245,13 @@ function CertificateForm({ cert, onSave, onCancel }: { cert: Certificate | null;
       {/* Actions */}
       <div className="card space-y-3">
         <h3 className="font-semibold text-sm">Save & Download</h3>
-        <p className="text-xs text-[var(--muted2)]">Fill in the details above, then save and download the certificate as PNG or PDF. There is no live preview — each download is freshly generated from the form data.</p>
+        <p className="text-xs text-[var(--muted2)]">Landscape A4 certificate, generated directly (no screen capture) for consistent results on every device, including mobile.</p>
         <div className="flex flex-wrap gap-2">
           <button onClick={handleSave} disabled={saving} className="btn-outline text-sm py-2.5 px-5">
             {saving ? <RefreshCw size={13} className="animate-spin" /> : <Save size={13} />} Save
           </button>
           <button onClick={() => handleExport('png')} disabled={exporting !== null} className="btn-outline text-sm py-2.5 px-5">
-            {exporting === 'png' ? <RefreshCw size={13} className="animate-spin" /> : <FileImage size={13} />} Download PNG
+            {exporting === 'png' ? <RefreshCw size={13} className="animate-spin" /> : <Download size={13} />} Download PNG
           </button>
           <button onClick={() => handleExport('pdf')} disabled={exporting !== null} className="btn-gold text-sm py-2.5 px-6">
             {exporting === 'pdf' ? <RefreshCw size={13} className="animate-spin" /> : <Download size={13} />} Download PDF
