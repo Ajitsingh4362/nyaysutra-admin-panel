@@ -11,7 +11,7 @@ import {
   ArrowRight, ChevronRight, CheckCircle, Scale, Shield, HeartHandshake,
   FileText, Search, Building2, Gavel, Users, Briefcase, Globe, BookOpen,
   MessageCircle, Youtube, Instagram, Facebook, Linkedin, Twitter,
-  GraduationCap, Award, Play, Mic, Volume2
+  GraduationCap, Award
 } from 'lucide-react';
 
 const stats = [
@@ -274,15 +274,6 @@ export default async function Home() {
               <h3 className="font-display text-xl font-semibold">YouTube Channel</h3>
               <p className="muted text-sm mt-2">Legal awareness videos, court journey clips & founder intro</p>
               <a href="https://youtube.com" target="_blank" className="btn-outline mt-4 text-sm">Subscribe</a>
-            </div>
-            {/* Audio placeholder */}
-            <div className="card flex flex-col items-center justify-center text-center py-8">
-              <div className="w-16 h-16 rounded-2xl bg-[rgba(201,168,76,0.1)] flex items-center justify-center mb-4">
-                <Mic size={28} className="text-[var(--gold)]"/>
-              </div>
-              <h3 className="font-display text-xl font-semibold">Audio Notes</h3>
-              <p className="muted text-sm mt-2">Legal awareness podcasts, voice notes & audio lectures</p>
-              <button className="btn-outline mt-4 text-sm"><Play size={13}/> Coming Soon</button>
             </div>
             {/* Social */}
             <div className="card">
