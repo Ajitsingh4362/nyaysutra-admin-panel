@@ -4,6 +4,7 @@ import GalleryManager from './_components/GalleryManager';
 import CourseManager from './_components/CourseManager';
 import TeamManager from './_components/TeamManager';
 import CertificateManager from './_components/CertificateManager';
+import DashboardCharts from './_components/DashboardCharts';
 // import AnalyticsDashboard from './_components/AnalyticsDashboard'; // Disabled until Google Analytics ID is added — uncomment to re-enable
 import {
   LayoutDashboard, FileText, Users, Inbox, LogOut, Menu, X, Plus,
@@ -764,6 +765,9 @@ export default function AdminPanel() {
                   </div>
                 ))}
               </div>
+
+              {/* ── SVG Analytics Charts ── */}
+              <DashboardCharts/>
 
               <div className="grid lg:grid-cols-2 gap-5">
                 <div className="card">
