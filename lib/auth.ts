@@ -20,3 +20,12 @@ export function getAdminFromCookie() {
     return verifyToken(token);
   } catch { return null; }
 }
+
+export function getStudentFromCookie() {
+  try {
+    const cookieStore = cookies();
+    const token = cookieStore.get('student_token')?.value;
+    if (!token) return null;
+    return verifyToken(token);
+  } catch { return null; }
+}

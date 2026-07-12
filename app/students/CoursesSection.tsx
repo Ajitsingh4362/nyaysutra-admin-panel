@@ -34,12 +34,16 @@ export default function CoursesSection() {
   if (courses.length === 0) return null;
 
   return (
-    <section className="section bg-[#0C1018]">
+    <section id="courses" className="section bg-[#0C1018]">
       <div className="container px-4 mx-auto">
         <div className="text-center mb-12">
           <p className="tag">Self-Paced Learning</p>
           <h2 className="section-title mt-3">Courses & Resources</h2>
           <p className="muted mt-4 max-w-2xl mx-auto">Structured courses with modules, reading material, video lectures and audio notes — created by Adv. A.K. Tripathi.</p>
+          <div className="flex items-center justify-center gap-4 mt-5">
+            <Link href="/students/dashboard" className="btn-outline text-xs py-2 px-4">My Courses</Link>
+            <Link href="/students/login" className="text-xs text-[var(--gold)] font-semibold">Student Login</Link>
+          </div>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {courses.map(c => (

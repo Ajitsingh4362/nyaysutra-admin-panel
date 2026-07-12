@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Facebook, Instagram, Linkedin, Youtube, Twitter, ShieldCheck } from 'lucide-react';
+import { Menu, X, Facebook, Instagram, Linkedin, Youtube, Twitter, ShieldCheck, GraduationCap } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
 
@@ -123,10 +123,18 @@ export default function Navbar() {
           {/* Utility link — not a primary nav item, so kept out of the main desktop menu */}
           <Link
             href="/verify"
-            className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium text-[var(--gold)] bg-[rgba(201,168,76,0.06)] hover:bg-[rgba(201,168,76,0.12)] transition-colors mb-4"
+            className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium text-[var(--gold)] bg-[rgba(201,168,76,0.06)] hover:bg-[rgba(201,168,76,0.12)] transition-colors mb-2"
           >
             <ShieldCheck size={16} className="shrink-0" />
             Verify a Certificate
+          </Link>
+
+          <Link
+            href="/students/dashboard"
+            className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium text-[var(--gold)] bg-[rgba(201,168,76,0.06)] hover:bg-[rgba(201,168,76,0.12)] transition-colors mb-4"
+          >
+            <GraduationCap size={16} className="shrink-0" />
+            My Courses / Student Login
           </Link>
 
           <div className="border-t border-[rgba(201,168,76,0.1)] pt-4 flex items-center justify-between gap-3 flex-wrap">
