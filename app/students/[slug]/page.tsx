@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   ArrowLeft, Clock, BookOpen, Award, CheckCircle, RefreshCw, FileText, Video, Mic,
-  IndianRupee, ChevronDown, Lock, PlayCircle, Loader2,
+  IndianRupee, ChevronDown, PlayCircle, Loader2,
 } from 'lucide-react';
 
 export default function CourseDetail() {
@@ -128,9 +128,6 @@ export default function CourseDetail() {
               <div className="mb-10">
                 <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
                   <h2 className="font-display text-2xl font-bold text-[var(--gold)]">Course Modules</h2>
-                  {!enrolled && (
-                    <span className="flex items-center gap-1.5 text-xs text-[var(--muted2)]"><Lock size={12}/> Enroll to unlock content</span>
-                  )}
                 </div>
                 <div className="space-y-2">
                   {course.modules.map((mod:any, idx:number) => (
@@ -144,25 +141,18 @@ export default function CourseDetail() {
                             {mod.content && <FileText size={12}/>}
                             {mod.pdfUrl && <FileText size={12}/>}
                           </span>
-                          {!enrolled && <Lock size={12} className="text-[var(--muted2)]"/>}
                         </div>
                         <ChevronDown size={16} className={`text-[var(--muted2)] transition-transform shrink-0 ${openModule===idx?'rotate-180':''}`}/>
                       </button>
                       {openModule===idx && (
                         <div className="px-4 pb-4 pl-15">
                           {mod.description && <p className="text-sm text-[var(--muted2)] mb-3">{mod.description}</p>}
-                          {enrolled ? (
-                            <div className="flex flex-wrap gap-2">
-                              {mod.pdfUrl && <a href={mod.pdfUrl} target="_blank" className="btn-outline text-xs py-1.5 px-3"><FileText size={11}/> PDF Notes</a>}
-                              {mod.videoUrl && <a href={mod.videoUrl} target="_blank" className="btn-outline text-xs py-1.5 px-3"><Video size={11}/> Video</a>}
-                              {mod.audioUrl && <a href={mod.audioUrl} target="_blank" className="btn-outline text-xs py-1.5 px-3"><Mic size={11}/> Audio</a>}
-                              {!mod.pdfUrl && !mod.videoUrl && !mod.audioUrl && <p className="text-xs text-[var(--muted2)]">Resources coming soon</p>}
-                            </div>
-                          ) : (
-                            <button onClick={handleEnroll} className="btn-gold text-xs py-1.5 px-3">
-                              <Lock size={11}/> Enroll to Access
-                            </button>
-                          )}
+                          <div className="flex flex-wrap gap-2">
+                            {mod.pdfUrl && <a href={mod.pdfUrl} target="_blank" className="btn-outline text-xs py-1.5 px-3"><FileText size={11}/> PDF Notes</a>}
+                            {mod.videoUrl && <Link href={`/students/learn/${course.slug || course._id}`} className="btn-outline text-xs py-1.5 px-3"><Video size={11}/> Watch Video</Link>}
+                            {mod.audioUrl && <a href={mod.audioUrl} target="_blank" className="btn-outline text-xs py-1.5 px-3"><Mic size={11}/> Audio</a>}
+                            {!mod.pdfUrl && !mod.videoUrl && !mod.audioUrl && <p className="text-xs text-[var(--muted2)]">Resources coming soon</p>}
+                          </div>
                         </div>
                       )}
                     </div>
