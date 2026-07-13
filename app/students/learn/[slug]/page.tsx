@@ -42,18 +42,19 @@ export default function CoursePlayer() {
 
   if (loading) return <main className="section text-center"><RefreshCw size={24} className="animate-spin inline text-[var(--muted2)]"/></main>;
 
-  if (notLoggedIn) {
-    return (
-      <main className="section overflow-x-hidden">
-        <div className="container mx-auto px-4 text-center">
-          <Lock size={28} className="mx-auto text-[var(--muted2)] mb-4"/>
-          <h1 className="section-title">Please Login</h1>
-          <p className="muted mt-3">Ye course access karne ke liye login karo.</p>
-          <Link href="/students/login" className="btn-gold mt-6">Login</Link>
-        </div>
-      </main>
-    );
-  }
+  // TEMP: login no longer required to view course content, for now.
+  // if (notLoggedIn) {
+  //   return (
+  //     <main className="section overflow-x-hidden">
+  //       <div className="container mx-auto px-4 text-center">
+  //         <Lock size={28} className="mx-auto text-[var(--muted2)] mb-4"/>
+  //         <h1 className="section-title">Please Login</h1>
+  //         <p className="muted mt-3">Ye course access karne ke liye login karo.</p>
+  //         <Link href="/students/login" className="btn-gold mt-6">Login</Link>
+  //       </div>
+  //     </main>
+  //   );
+  // }
 
   if (!course) {
     return (
@@ -71,20 +72,10 @@ export default function CoursePlayer() {
     return cid === course._id;
   });
 
-  if (!enrollment) {
-    return (
-      <main className="section overflow-x-hidden">
-        <div className="container mx-auto px-4 text-center">
-          <Lock size={28} className="mx-auto text-[var(--muted2)] mb-4"/>
-          <h1 className="section-title">Not Enrolled</h1>
-          <p className="muted mt-3">Is course ka content dekhne ke liye pehle enroll karo.</p>
-          <Link href={`/students/${course.slug || course._id}`} className="btn-gold mt-6">Go to Course Page</Link>
-        </div>
-      </main>
-    );
-  }
+  // TEMP: content unlocked for any logged-in student for now, even without a matched enrollment record.
+  const effectiveEnrollment = enrollment || { progress: { completedModules: [] } };
 
-  const completedModules: number[] = enrollment.progress?.completedModules || [];
+  const completedModules: number[] = effectiveEnrollment.progress?.completedModules || [];
   const modules = course.modules || [];
   const currentModule = modules[activeModule];
   const isCompleted = completedModules.includes(activeModule);
