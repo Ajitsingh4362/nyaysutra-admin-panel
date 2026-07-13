@@ -34,11 +34,19 @@ export const POST = withErrorHandling(async (req: Request) => {
   }
 
   if (!course.isFree) {
-    // Paid checkout is not wired up yet — payment gateway integration pending.
-    return NextResponse.json(
-      { error: 'Is course ke liye online payment abhi available nahi hai. Please WhatsApp/Contact se enroll karo.' },
-      { status: 402 }
-    );
+    // Payment gateway not wired up yet — enrollment is granted directly (payment bypassed).
+    student.enrollments.push({
+      course: course._id,
+      enrolledAt: new Date(),
+      amountPaid: course.fee || 0,
+      paymentStatus: 'pending',
+      paymentId: 'bypass-manual',
+      progress: { completedModules: [] },
+    } as any);
+
+    await student.save();
+
+    return NextResponse.json({ success: true, message: 'Enrolled successfully! (Payment pending — will be collected separately.)' });
   }
 
   student.enrollments.push({

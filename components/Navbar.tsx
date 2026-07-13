@@ -12,6 +12,7 @@ const nav = [
   { href: '/team',           label: 'Team' },
   { href: '/practice-areas', label: 'Practice Areas' },
   { href: '/courts',         label: 'Courts' },
+  { href: '/courses',        label: 'Courses' },
   { href: '/students',       label: 'Students' },
   { href: '/gallery',        label: 'Gallery' },
   { href: '/blog',           label: 'Blog' },

@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   ArrowLeft, Clock, BookOpen, Award, CheckCircle, RefreshCw, FileText, Video, Mic,
-  IndianRupee, MessageCircle, ChevronDown, Lock, PlayCircle, Loader2,
+  IndianRupee, ChevronDown, Lock, PlayCircle, Loader2,
 } from 'lucide-react';
 
 export default function CourseDetail() {
@@ -197,16 +197,11 @@ export default function CourseDetail() {
                   <Link href={`/students/learn/${course.slug || course._id}`} className="btn-gold w-full justify-center text-sm">
                     <PlayCircle size={14}/> Go to Course
                   </Link>
-                ) : course.isFree ? (
+                ) : (
                   <button onClick={handleEnroll} disabled={enrolling} className="btn-gold w-full justify-center text-sm">
                     {enrolling ? <Loader2 size={14} className="animate-spin"/> : <PlayCircle size={14}/>}
-                    {enrolling ? 'Enrolling...' : loggedIn ? 'Enroll Free' : 'Login to Enroll Free'}
+                    {enrolling ? 'Enrolling...' : loggedIn ? (course.isFree ? 'Enroll Free' : 'Enroll Now') : 'Login to Enroll'}
                   </button>
-                ) : (
-                  <>
-                    <a href="https://wa.me/919971950371" target="_blank" className="btn-gold w-full justify-center text-sm"><MessageCircle size={14}/> Enquire on WhatsApp</a>
-                    <Link href="/contact" className="btn-outline w-full justify-center text-sm">Contact for Enrollment</Link>
-                  </>
                 )}
                 {!loggedIn && (
                   <p className="text-xs text-[var(--muted2)] text-center">
