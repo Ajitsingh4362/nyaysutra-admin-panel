@@ -25,6 +25,7 @@ export function withErrorHandling<T extends (...args: any[]) => Promise<NextResp
           error: isDbError
             ? 'Database temporarily unavailable. Please try again shortly.'
             : 'Something went wrong. Please try again.',
+          detail: err?.message || String(err),
         },
         { status: isDbError ? 503 : 500 }
       );
