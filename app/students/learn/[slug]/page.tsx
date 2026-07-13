@@ -1,10 +1,10 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   ArrowLeft, RefreshCw, CheckCircle2, Circle, FileText, Video, Mic,
-  Lock, PlayCircle, Award, StickyNote, Download, ChevronLeft, ChevronRight,
+  Lock, PlayCircle, Award, StickyNote, Download, ChevronLeft, ChevronRight, Maximize,
 } from 'lucide-react';
 
 type Tab = 'video' | 'notes' | 'resources';
@@ -23,6 +23,7 @@ export default function CoursePlayer() {
   const [course, setCourse] = useState<any>(null);
   const [student, setStudent] = useState<any>(null);
   const [videoError, setVideoError] = useState(false);
+  const videoWrapRef = useRef<HTMLDivElement>(null);
   const [notLoggedIn, setNotLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeModule, setActiveModule] = useState(0);
@@ -186,30 +187,63 @@ export default function CoursePlayer() {
                 {activeTab === 'video' && currentModule.videoUrl && (() => {
                   const embed = getVideoEmbed(currentModule.videoUrl);
                   if (!embed) return null;
+
+                  const handleFullscreen = async () => {
+                    const el = videoWrapRef.current;
+                    if (!el) return;
+                    try {
+                      if (el.requestFullscreen) await el.requestFullscreen();
+                      // @ts-ignore vendor-prefixed fallback for older mobile browsers
+                      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+                      // Try to force landscape on phones once fullscreen is active (Android Chrome only; iOS ignores this safely).
+                      // @ts-ignore
+                      if (screen.orientation && screen.orientation.lock) {
+                        // @ts-ignore
+                        await screen.orientation.lock('landscape').catch(() => {});
+                      }
+                    } catch {
+                      // Fullscreen not supported/blocked — controls still have a native fullscreen icon as fallback.
+                    }
+                  };
+
                   if (embed.type === 'youtube') {
                     return (
-                      <div className="aspect-video rounded-xl overflow-hidden bg-black mb-2">
+                      <div ref={videoWrapRef} className="relative aspect-video rounded-xl overflow-hidden bg-black mb-2 group">
                         <iframe
                           src={embed.embedUrl}
                           className="w-full h-full"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                           allowFullScreen
                         />
+                        <button
+                          onClick={handleFullscreen}
+                          className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-black/70 hover:bg-black/90 text-white text-xs px-3 py-2 rounded-lg backdrop-blur-sm transition-colors"
+                        >
+                          <Maximize size={13}/> Fullscreen
+                        </button>
                       </div>
                     );
                   }
                   return (
                     <div className="mb-2">
-                      <div className="aspect-video rounded-xl overflow-hidden bg-black">
+                      <div ref={videoWrapRef} className="relative aspect-video rounded-xl overflow-hidden bg-black group">
                         {!videoError ? (
-                          <video
-                            key={embed.embedUrl}
-                            src={embed.embedUrl}
-                            controls
-                            playsInline
-                            className="w-full h-full"
-                            onError={() => setVideoError(true)}
-                          />
+                          <>
+                            <video
+                              key={embed.embedUrl}
+                              src={embed.embedUrl}
+                              controls
+                              playsInline
+                              className="w-full h-full"
+                              onError={() => setVideoError(true)}
+                            />
+                            <button
+                              onClick={handleFullscreen}
+                              className="absolute bottom-14 right-3 flex items-center gap-1.5 bg-black/70 hover:bg-black/90 text-white text-xs px-3 py-2 rounded-lg backdrop-blur-sm transition-colors"
+                            >
+                              <Maximize size={13}/> Fullscreen
+                            </button>
+                          </>
                         ) : (
                           <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-center px-6">
                             <Video size={24} className="text-[var(--muted2)]"/>
