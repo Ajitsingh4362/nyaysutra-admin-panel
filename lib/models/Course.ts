@@ -5,7 +5,7 @@ export interface ICourse extends Document {
   level: string; duration: string; language: string; instructor: string;
   coverImage: string; coverImagePublicId: string; fee: number; isFree: boolean;
   modules: Array<{
-    title: string; description: string; pdfUrl: string; videoUrl: string;
+    title: string; description: string; content: string; pdfUrl: string; videoUrl: string;
     audioUrl: string; attachments: string[]; order: number; published: boolean;
   }>;
   learningOutcomes: string[]; prerequisites: string[];
@@ -15,7 +15,8 @@ export interface ICourse extends Document {
 }
 
 const ModuleSchema = new Schema({
-  title: String, description: String, pdfUrl: { type: String, default: '' },
+  title: String, description: String, content: { type: String, default: '' },
+  pdfUrl: { type: String, default: '' },
   videoUrl: { type: String, default: '' }, audioUrl: { type: String, default: '' },
   attachments: [String], order: { type: Number, default: 0 },
   published: { type: Boolean, default: true },

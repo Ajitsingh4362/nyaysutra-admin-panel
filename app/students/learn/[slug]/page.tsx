@@ -4,8 +4,10 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   ArrowLeft, RefreshCw, CheckCircle2, Circle, FileText, Video, Mic,
-  Lock, PlayCircle, Award,
+  Lock, PlayCircle, Award, StickyNote, Download, ChevronLeft, ChevronRight,
 } from 'lucide-react';
+
+type Tab = 'video' | 'notes' | 'resources';
 
 export default function CoursePlayer() {
   const params = useParams();
@@ -14,6 +16,7 @@ export default function CoursePlayer() {
   const [notLoggedIn, setNotLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeModule, setActiveModule] = useState(0);
+  const [activeTab, setActiveTab] = useState<Tab>('video');
   const [marking, setMarking] = useState(false);
 
   useEffect(() => {
@@ -87,6 +90,11 @@ export default function CoursePlayer() {
   const isCompleted = completedModules.includes(activeModule);
   const allCompleted = modules.length > 0 && completedModules.length >= modules.length;
 
+  const notesParagraphs: string[] = (currentModule?.content || '')
+    .split(/\n\s*\n/)
+    .map((p: string) => p.trim())
+    .filter(Boolean);
+
   async function markComplete() {
     setMarking(true);
     try {
@@ -111,6 +119,20 @@ export default function CoursePlayer() {
     }
   }
 
+  function goToModule(idx: number) {
+    setActiveModule(idx);
+    setActiveTab(currentModuleHasVideo(idx) ? 'video' : currentModuleHasNotes(idx) ? 'notes' : 'resources');
+  }
+  function currentModuleHasVideo(idx: number) { return !!modules[idx]?.videoUrl; }
+  function currentModuleHasNotes(idx: number) { return !!modules[idx]?.content; }
+
+  const tabs: { key: Tab; label: string; icon: any; show: boolean }[] = [
+    { key: 'video', label: 'Video', icon: Video, show: !!currentModule?.videoUrl },
+    { key: 'notes', label: 'Notes', icon: StickyNote, show: !!currentModule?.content },
+    { key: 'resources', label: 'Resources', icon: FileText, show: !!(currentModule?.pdfUrl || currentModule?.audioUrl) },
+  ];
+  const visibleTabs = tabs.filter(t => t.show);
+
   return (
     <main className="overflow-x-hidden">
       <section className="py-6 px-4 bg-[#0C1018] border-b border-[rgba(201,168,76,0.1)]">
@@ -133,39 +155,89 @@ export default function CoursePlayer() {
           <div>
             {currentModule ? (
               <div className="card">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-1">
                   <h2 className="font-display text-xl font-semibold">
                     {activeModule + 1}. {currentModule.title}
                   </h2>
                 </div>
                 {currentModule.description && (
-                  <p className="muted mb-5">{currentModule.description}</p>
+                  <p className="muted text-sm mb-5">{currentModule.description}</p>
                 )}
 
-                {currentModule.videoUrl && (
-                  <div className="mb-4 aspect-video rounded-xl overflow-hidden bg-black">
+                {/* Tabs */}
+                {visibleTabs.length > 0 && (
+                  <div className="flex items-center gap-1 mb-5 border-b border-[rgba(201,168,76,0.1)]">
+                    {visibleTabs.map(t => (
+                      <button
+                        key={t.key}
+                        onClick={() => setActiveTab(t.key)}
+                        className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px
+                          ${activeTab === t.key ? 'border-[var(--gold)] text-[var(--gold)]' : 'border-transparent text-[var(--muted2)] hover:text-[var(--ivory)]'}`}
+                      >
+                        <t.icon size={14}/> {t.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Tab content */}
+                {activeTab === 'video' && currentModule.videoUrl && (
+                  <div className="aspect-video rounded-xl overflow-hidden bg-black mb-2">
                     <video src={currentModule.videoUrl} controls className="w-full h-full"/>
                   </div>
                 )}
 
-                <div className="flex flex-wrap gap-2 mb-5">
-                  {currentModule.pdfUrl && (
-                    <a href={currentModule.pdfUrl} target="_blank" className="btn-outline text-sm">
-                      <FileText size={14}/> Open PDF Notes
-                    </a>
-                  )}
-                  {currentModule.audioUrl && (
-                    <a href={currentModule.audioUrl} target="_blank" className="btn-outline text-sm">
-                      <Mic size={14}/> Audio Notes
-                    </a>
-                  )}
-                </div>
-
-                {!currentModule.pdfUrl && !currentModule.videoUrl && !currentModule.audioUrl && (
-                  <p className="text-sm text-[var(--muted2)]">Resources coming soon for this module.</p>
+                {activeTab === 'notes' && (
+                  <div className="prose-notes max-w-none">
+                    {notesParagraphs.length > 0 ? (
+                      notesParagraphs.map((p, i) => (
+                        <p key={i} className="text-sm text-[var(--muted)] leading-relaxed mb-4 whitespace-pre-line">{p}</p>
+                      ))
+                    ) : (
+                      <p className="text-sm text-[var(--muted2)]">Is lesson ke liye abhi notes add nahi hue.</p>
+                    )}
+                  </div>
                 )}
 
-                <div className="flex items-center gap-3 pt-4 border-t border-[rgba(201,168,76,0.1)]">
+                {activeTab === 'resources' && (
+                  <div className="flex flex-wrap gap-2">
+                    {currentModule.pdfUrl && (
+                      <a href={currentModule.pdfUrl} target="_blank" className="btn-outline text-sm">
+                        <Download size={13}/> Download PDF Notes
+                      </a>
+                    )}
+                    {currentModule.audioUrl && (
+                      <a href={currentModule.audioUrl} target="_blank" className="btn-outline text-sm">
+                        <Mic size={13}/> Audio Notes
+                      </a>
+                    )}
+                    {!currentModule.pdfUrl && !currentModule.audioUrl && (
+                      <p className="text-sm text-[var(--muted2)]">Koi resources abhi available nahi hain.</p>
+                    )}
+                  </div>
+                )}
+
+                {visibleTabs.length === 0 && (
+                  <p className="text-sm text-[var(--muted2)]">Is module ke liye content jald add hoga.</p>
+                )}
+
+                <div className="flex items-center justify-between gap-3 pt-5 mt-5 border-t border-[rgba(201,168,76,0.1)] flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => activeModule > 0 && goToModule(activeModule - 1)}
+                      disabled={activeModule === 0}
+                      className="btn-outline text-xs py-2 px-3 disabled:opacity-30"
+                    >
+                      <ChevronLeft size={13}/> Prev
+                    </button>
+                    <button
+                      onClick={() => activeModule < modules.length - 1 && goToModule(activeModule + 1)}
+                      disabled={activeModule === modules.length - 1}
+                      className="btn-outline text-xs py-2 px-3 disabled:opacity-30"
+                    >
+                      Next <ChevronRight size={13}/>
+                    </button>
+                  </div>
                   <button
                     onClick={markComplete}
                     disabled={marking || isCompleted}
@@ -173,11 +245,6 @@ export default function CoursePlayer() {
                   >
                     {isCompleted ? <><CheckCircle2 size={14}/> Completed</> : <><Circle size={14}/> {marking ? 'Saving...' : 'Mark as Complete'}</>}
                   </button>
-                  {activeModule < modules.length - 1 && (
-                    <button onClick={() => setActiveModule(activeModule + 1)} className="btn-outline text-sm">
-                      Next Module
-                    </button>
-                  )}
                 </div>
               </div>
             ) : (
@@ -193,19 +260,24 @@ export default function CoursePlayer() {
               <h3 className="font-display text-sm font-semibold uppercase tracking-wide text-[var(--muted2)] mb-4">
                 Course Content ({completedModules.length}/{modules.length})
               </h3>
-              <div className="space-y-1.5 max-h-[60vh] overflow-y-auto">
+              <div className="space-y-1.5 max-h-[65vh] overflow-y-auto">
                 {modules.map((mod: any, idx: number) => {
                   const done = completedModules.includes(idx);
                   const active = idx === activeModule;
                   return (
                     <button
                       key={idx}
-                      onClick={() => setActiveModule(idx)}
+                      onClick={() => goToModule(idx)}
                       className={`w-full flex items-center gap-2.5 text-left p-2.5 rounded-xl text-sm transition-colors
                         ${active ? 'bg-[rgba(201,168,76,0.12)] text-[var(--gold)]' : 'text-[var(--muted)] hover:bg-[rgba(201,168,76,0.06)]'}`}
                     >
                       {done ? <CheckCircle2 size={15} className="text-green-400 shrink-0"/> : <PlayCircle size={15} className="shrink-0"/>}
-                      <span className="truncate">{idx + 1}. {mod.title}</span>
+                      <span className="truncate flex-1">{idx + 1}. {mod.title}</span>
+                      <span className="flex items-center gap-1 shrink-0 text-[var(--muted2)]">
+                        {mod.videoUrl && <Video size={11}/>}
+                        {mod.content && <StickyNote size={11}/>}
+                        {mod.pdfUrl && <FileText size={11}/>}
+                      </span>
                     </button>
                   );
                 })}

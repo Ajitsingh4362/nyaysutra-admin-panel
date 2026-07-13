@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 
 interface Module {
-  title: string; description: string; pdfUrl: string; videoUrl: string; audioUrl: string; order: number; published: boolean;
+  title: string; description: string; content: string; pdfUrl: string; videoUrl: string; audioUrl: string; order: number; published: boolean;
 }
 interface Course {
   _id?: string; title: string; slug?: string; shortSummary: string; fullDescription: string;
@@ -22,7 +22,7 @@ const blank: Course = {
   learningOutcomes:[], prerequisites:[], hasCertificate:false, status:'published', featured:false,
 };
 
-const blankModule: Module = { title:'', description:'', pdfUrl:'', videoUrl:'', audioUrl:'', order:0, published:true };
+const blankModule: Module = { title:'', description:'', content:'', pdfUrl:'', videoUrl:'', audioUrl:'', order:0, published:true };
 
 function CourseForm({ course, onSave, onCancel }: { course: Course|null; onSave:()=>void; onCancel:()=>void }) {
   const [form, setForm] = useState<Course>({ ...blank, ...(course||{}) });
@@ -216,15 +216,27 @@ function CourseForm({ course, onSave, onCancel }: { course: Course|null; onSave:
               {openModule===idx && (
                 <div className="mt-3 pt-3 border-t border-[rgba(201,168,76,0.1)] space-y-3">
                   <input value={mod.title} onChange={e=>updateModule(idx,'title',e.target.value)} className="input text-sm" placeholder="Module title..."/>
-                  <textarea value={mod.description} onChange={e=>updateModule(idx,'description',e.target.value)} className="input text-sm" style={{minHeight:60}} placeholder="Module description..."/>
+                  <textarea value={mod.description} onChange={e=>updateModule(idx,'description',e.target.value)} className="input text-sm" style={{minHeight:60}} placeholder="Short module description (shown before enrolling)..."/>
+                  <div>
+                    <label className="block text-[10px] text-[var(--muted2)] mb-1.5 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                      <FileText size={11}/> Lesson Notes (Text Content)
+                    </label>
+                    <textarea
+                      value={mod.content}
+                      onChange={e=>updateModule(idx,'content',e.target.value)}
+                      className="input text-sm font-mono leading-relaxed"
+                      style={{minHeight:180}}
+                      placeholder={'Full written notes for this lesson, jaise Coding Ninjas ke notes tab me hota hai.\n\nParagraphs ke beech ek blank line chhodo — wahi se naya paragraph banega.'}
+                    />
+                  </div>
                   <div className="grid sm:grid-cols-3 gap-2">
                     <div className="relative">
                       <FileText size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted2)]"/>
-                      <input value={mod.pdfUrl} onChange={e=>updateModule(idx,'pdfUrl',e.target.value)} className="input text-xs pl-8" placeholder="PDF URL"/>
+                      <input value={mod.pdfUrl} onChange={e=>updateModule(idx,'pdfUrl',e.target.value)} className="input text-xs pl-8" placeholder="PDF URL (downloadable notes)"/>
                     </div>
                     <div className="relative">
                       <Video size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted2)]"/>
-                      <input value={mod.videoUrl} onChange={e=>updateModule(idx,'videoUrl',e.target.value)} className="input text-xs pl-8" placeholder="Video URL"/>
+                      <input value={mod.videoUrl} onChange={e=>updateModule(idx,'videoUrl',e.target.value)} className="input text-xs pl-8" placeholder="Video URL (lecture)"/>
                     </div>
                     <div className="relative">
                       <Mic size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted2)]"/>

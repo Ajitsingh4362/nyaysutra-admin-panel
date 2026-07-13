@@ -139,6 +139,11 @@ export default function CourseDetail() {
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-[rgba(201,168,76,0.15)] flex items-center justify-center text-[var(--gold)] font-bold text-sm shrink-0">{idx+1}</div>
                           <span className="font-semibold text-sm">{mod.title}</span>
+                          <span className="flex items-center gap-1.5 text-[var(--muted2)]">
+                            {mod.videoUrl && <Video size={12}/>}
+                            {mod.content && <FileText size={12}/>}
+                            {mod.pdfUrl && <FileText size={12}/>}
+                          </span>
                           {!enrolled && <Lock size={12} className="text-[var(--muted2)]"/>}
                         </div>
                         <ChevronDown size={16} className={`text-[var(--muted2)] transition-transform shrink-0 ${openModule===idx?'rotate-180':''}`}/>
