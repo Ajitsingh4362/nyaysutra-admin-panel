@@ -9,10 +9,20 @@ import {
 
 type Tab = 'video' | 'notes' | 'resources';
 
+function getVideoEmbed(url: string): { type: 'youtube' | 'direct'; embedUrl: string } | null {
+  if (!url) return null;
+  const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (ytMatch) {
+    return { type: 'youtube', embedUrl: `https://www.youtube.com/embed/${ytMatch[1]}` };
+  }
+  return { type: 'direct', embedUrl: url };
+}
+
 export default function CoursePlayer() {
   const params = useParams();
   const [course, setCourse] = useState<any>(null);
   const [student, setStudent] = useState<any>(null);
+  const [videoError, setVideoError] = useState(false);
   const [notLoggedIn, setNotLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeModule, setActiveModule] = useState(0);
@@ -112,6 +122,7 @@ export default function CoursePlayer() {
 
   function goToModule(idx: number) {
     setActiveModule(idx);
+    setVideoError(false);
     setActiveTab(currentModuleHasVideo(idx) ? 'video' : currentModuleHasNotes(idx) ? 'notes' : 'resources');
   }
   function currentModuleHasVideo(idx: number) { return !!modules[idx]?.videoUrl; }
@@ -172,11 +183,48 @@ export default function CoursePlayer() {
                 )}
 
                 {/* Tab content */}
-                {activeTab === 'video' && currentModule.videoUrl && (
-                  <div className="aspect-video rounded-xl overflow-hidden bg-black mb-2">
-                    <video src={currentModule.videoUrl} controls className="w-full h-full"/>
-                  </div>
-                )}
+                {activeTab === 'video' && currentModule.videoUrl && (() => {
+                  const embed = getVideoEmbed(currentModule.videoUrl);
+                  if (!embed) return null;
+                  if (embed.type === 'youtube') {
+                    return (
+                      <div className="aspect-video rounded-xl overflow-hidden bg-black mb-2">
+                        <iframe
+                          src={embed.embedUrl}
+                          className="w-full h-full"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="mb-2">
+                      <div className="aspect-video rounded-xl overflow-hidden bg-black">
+                        {!videoError ? (
+                          <video
+                            key={embed.embedUrl}
+                            src={embed.embedUrl}
+                            controls
+                            playsInline
+                            className="w-full h-full"
+                            onError={() => setVideoError(true)}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-center px-6">
+                            <Video size={24} className="text-[var(--muted2)]"/>
+                            <p className="text-sm text-[var(--muted2)]">
+                              Video yahan load nahi ho paya. Link direct video file (.mp4) ka nahi ho sakta.
+                            </p>
+                            <a href={embed.embedUrl} target="_blank" className="btn-outline text-xs py-1.5 px-3">
+                              Video seedha link me kholo
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {activeTab === 'notes' && (
                   <div className="prose-notes max-w-none">
