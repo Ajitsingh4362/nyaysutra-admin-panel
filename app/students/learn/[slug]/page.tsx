@@ -9,11 +9,14 @@ import {
 
 type Tab = 'video' | 'notes' | 'resources';
 
-function getVideoEmbed(url: string): { type: 'youtube' | 'direct'; embedUrl: string } | null {
+function getVideoEmbed(url: string): { type: 'youtube' | 'iframe' | 'direct'; embedUrl: string } | null {
   if (!url) return null;
   const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
   if (ytMatch) {
     return { type: 'youtube', embedUrl: `https://www.youtube.com/embed/${ytMatch[1]}` };
+  }
+  if (url.includes('player.cloudinary.com/embed')) {
+    return { type: 'iframe', embedUrl: url };
   }
   return { type: 'direct', embedUrl: url };
 }
@@ -206,13 +209,13 @@ export default function CoursePlayer() {
                     }
                   };
 
-                  if (embed.type === 'youtube') {
+                  if (embed.type === 'youtube' || embed.type === 'iframe') {
                     return (
                       <div ref={videoWrapRef} className="relative aspect-video rounded-xl overflow-hidden bg-black mb-2 group">
                         <iframe
                           src={embed.embedUrl}
                           className="w-full h-full"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                           allowFullScreen
                         />
                         <button
