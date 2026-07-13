@@ -16,7 +16,7 @@ const pillars = [
 ];
 
 const whyChoose = [
-  { icon: Star,         title: 'Research-Based Approach',          desc: '2+ years of focused practice backed by deep legal research on every matter.' },
+  { icon: Star,         title: 'Research-Based Approach',          desc: '7+ years of focused practice backed by deep legal research on every matter.' },
   { icon: ShieldCheck,  title: 'Ethical & Professional Standards',  desc: 'Zero compromise on legal ethics — always in the client\'s best interest.' },
   { icon: Globe2,       title: 'Online + Offline Support',          desc: 'WhatsApp, email, video calls and in-person meetings — your choice.' },
   { icon: GraduationCap,'title': 'Law Student Guidance',            desc: 'Dedicated to building the next generation of legal professionals.' },
@@ -31,7 +31,7 @@ const timeline = [
   { year: '2024',      title: 'NyayaSutra Launched', desc: 'NyayaSutra — Legal Intelligence officially launched as a full-stack legal intelligence platform combining legal services, student mentorship, research, and legal intelligence.' },
 ];
 
-const stats = [{ num:'2+', label:'Years Legal Study' },{ num:'500+', label:'Cases Handled' },{ num:'1200+', label:'Clients Served' },{ num:'98%', label:'Satisfaction Rate' }];
+const stats = [{ num:'7+', label:'Years Legal Study' },{ num:'500+', label:'Cases Handled' },{ num:'1200+', label:'Clients Served' },{ num:'98%', label:'Satisfaction Rate' }];
 
 const professionalFocus = ['Litigation Support','Legal Research','Drafting and Documentation','Constitutional Law','Criminal Law','Civil Law','Corporate Advisory','Arbitration','International Legal Research','Law Student Mentorship'];
 
