@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 const stats = [
-  { num:'2+', label:'Years Experience' },
+  { num:'7+', label:'Years Experience' },
   { num:'500+', label:'Cases Handled' },
   { num:'1200+', label:'Clients Served' },
   { num:'98%', label:'Client Satisfaction' },
