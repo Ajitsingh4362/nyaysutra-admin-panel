@@ -80,6 +80,10 @@ export default function Footer() {
               <MapPin size={15} className="shrink-0 text-[var(--gold)] mt-0.5"/>
               <span>Allahabad — Front District Judge Block C, Room No. 28</span>
             </div>
+            <div className="flex gap-3 text-sm text-[var(--muted2)]">
+              <MapPin size={15} className="shrink-0 text-[var(--gold)] mt-0.5"/>
+              <span>Sangam Vihar, Wazirabad Highway Road, Delhi – 110084</span>
+            </div>
           </div>
           <div className="mt-4 p-3 rounded-xl bg-[rgba(201,168,76,0.06)] border border-[rgba(201,168,76,0.13)]">
             <p className="text-[10px] text-[var(--gold)] font-semibold mb-1">Office Hours</p>
