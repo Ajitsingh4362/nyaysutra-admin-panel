@@ -69,7 +69,7 @@ export default function Navbar() {
         </Link>
 
         {/* ── Desktop Nav ── */}
-        <nav className="hidden lg:flex items-center gap-3 lg:gap-3 xl:gap-5 flex-1 justify-center" aria-label="Main navigation">
+        <nav className="hidden min-[900px]:flex items-center gap-3 lg:gap-4 xl:gap-5 flex-1 justify-center" aria-label="Main navigation">
           {nav.map(({ href, label }) => (
             <Link
               key={href} href={href}
@@ -82,7 +82,7 @@ export default function Navbar() {
         </nav>
 
         {/* ── Desktop: socials + lang ── */}
-        <div className="hidden lg:flex items-center gap-2.5 shrink-0">
+        <div className="hidden min-[900px]:flex items-center gap-2.5 shrink-0">
           {socials.map(({ icon: Icon, href, label }) => (
             <a key={label} href={href} target="_blank" rel="noreferrer" aria-label={label}
               className="text-[rgba(197,187,171,0.5)] hover:text-[var(--gold)] transition-colors">
@@ -95,7 +95,7 @@ export default function Navbar() {
 
         {/* ── Mobile hamburger ── */}
         <button
-          className="lg:hidden p-2 text-[var(--ivory)] shrink-0"
+          className="min-[900px]:hidden p-2 text-[var(--ivory)] shrink-0"
           onClick={() => setOpen(v => !v)}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
@@ -106,7 +106,7 @@ export default function Navbar() {
 
       {/* ── Mobile drawer ── */}
       {open && (
-        <div className="lg:hidden bg-[#07090F] border-t border-[rgba(201,168,76,0.1)] px-4 py-4 max-h-[80vh] overflow-y-auto">
+        <div className="min-[900px]:hidden bg-[#07090F] border-t border-[rgba(201,168,76,0.1)] px-4 py-4 max-h-[80vh] overflow-y-auto">
           <nav className="flex flex-col gap-0.5 mb-2" aria-label="Mobile navigation">
             {nav.map(({ href, label }) => (
               <Link
