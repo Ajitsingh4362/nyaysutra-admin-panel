@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
-import Student from '@/lib/models/Student';
+import bcrypt from 'bcryptjs';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { signToken } from '@/lib/auth';
 import { withErrorHandling } from '@/lib/apiHandler';
 
@@ -14,19 +14,27 @@ export const POST = withErrorHandling(async (req: Request) => {
     return NextResponse.json({ error: 'Password kam se kam 6 characters ka hona chahiye.' }, { status: 400 });
   }
 
-  await connectDB();
+  const sb = supabaseAdmin();
+  const cleanEmail = email.toLowerCase().trim();
 
-  const existing = await Student.findOne({ email: email.toLowerCase().trim() });
+  const { data: existing } = await sb.from('students').select('id').eq('email', cleanEmail).maybeSingle();
   if (existing) {
     return NextResponse.json({ error: 'Is email se account already exist karta hai. Login karo.' }, { status: 409 });
   }
 
-  const student = await Student.create({ name, email, phone, password });
+  const hashed = await bcrypt.hash(password, 10);
+  const { data: student, error } = await sb
+    .from('students')
+    .insert({ name, email: cleanEmail, phone: phone || '', password: hashed })
+    .select()
+    .single();
 
-  const token = signToken({ id: student._id.toString(), email: student.email, role: 'student' });
+  if (error) throw error;
+
+  const token = signToken({ id: student.id, email: student.email, role: 'student' });
   const res = NextResponse.json({
     success: true,
-    student: { id: student._id, name: student.name, email: student.email },
+    student: { id: student.id, name: student.name, email: student.email },
   });
   res.cookies.set('student_token', token, {
     httpOnly: true,

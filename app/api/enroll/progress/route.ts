@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
-import Student from '@/lib/models/Student';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { getStudentFromCookie } from '@/lib/auth';
 import { withErrorHandling } from '@/lib/apiHandler';
 
@@ -15,23 +14,29 @@ export const POST = withErrorHandling(async (req: Request) => {
     return NextResponse.json({ error: 'courseId aur moduleIndex required hain.' }, { status: 400 });
   }
 
-  await connectDB();
-  const student = await Student.findById(session.id);
-  if (!student) {
-    return NextResponse.json({ error: 'Student not found.' }, { status: 404 });
-  }
+  const sb = supabaseAdmin();
 
-  const enrollment = student.enrollments.find((e: any) => e.course.toString() === courseId);
+  const { data: enrollment, error: findErr } = await sb
+    .from('enrollments')
+    .select('id, completed_modules')
+    .eq('student_id', session.id)
+    .eq('course_id', courseId)
+    .maybeSingle();
+
+  if (findErr) throw findErr;
   if (!enrollment) {
     return NextResponse.json({ error: 'Enrolled nahi ho is course me.' }, { status: 403 });
   }
 
-  if (!enrollment.progress.completedModules.includes(moduleIndex)) {
-    enrollment.progress.completedModules.push(moduleIndex);
-  }
-  enrollment.progress.lastAccessedAt = new Date();
+  const completed: number[] = enrollment.completed_modules || [];
+  if (!completed.includes(moduleIndex)) completed.push(moduleIndex);
 
-  await student.save();
+  const { error: updateErr } = await sb
+    .from('enrollments')
+    .update({ completed_modules: completed, last_accessed_at: new Date().toISOString() })
+    .eq('id', enrollment.id);
 
-  return NextResponse.json({ success: true, completedModules: enrollment.progress.completedModules });
+  if (updateErr) throw updateErr;
+
+  return NextResponse.json({ success: true, completedModules: completed });
 });

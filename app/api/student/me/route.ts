@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
-import Student from '@/lib/models/Student';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { getStudentFromCookie } from '@/lib/auth';
+import { mapStudent } from '@/lib/mappers';
 import { withErrorHandling } from '@/lib/apiHandler';
-import '@/lib/models/Course';
 
 export const GET = withErrorHandling(async () => {
   const session = getStudentFromCookie();
@@ -11,14 +10,25 @@ export const GET = withErrorHandling(async () => {
     return NextResponse.json({ error: 'Not logged in' }, { status: 401 });
   }
 
-  await connectDB();
-  const student = await Student.findById(session.id)
-    .select('-password')
-    .populate('enrollments.course');
+  const sb = supabaseAdmin();
 
+  const { data: student, error: studentErr } = await sb
+    .from('students')
+    .select('id, name, email, phone, created_at')
+    .eq('id', session.id)
+    .maybeSingle();
+
+  if (studentErr) throw studentErr;
   if (!student) {
     return NextResponse.json({ error: 'Student not found' }, { status: 404 });
   }
 
-  return NextResponse.json({ student });
+  const { data: enrollments, error: enrollErr } = await sb
+    .from('enrollments')
+    .select('*, course:courses(*)')
+    .eq('student_id', student.id);
+
+  if (enrollErr) throw enrollErr;
+
+  return NextResponse.json({ student: mapStudent(student, enrollments || []) });
 });

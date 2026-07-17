@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
-import Student from '@/lib/models/Student';
+import bcrypt from 'bcryptjs';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const key = searchParams.get('key');
   const email = searchParams.get('email');
   const password = searchParams.get('password');
-  const name = searchParams.get('name') || 'Ajit Singh';
+  const name = searchParams.get('name') || 'Student';
 
   if (key !== process.env.ADMIN_PASSWORD) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -17,24 +17,31 @@ export async function GET(req: Request) {
   }
 
   try {
-    await connectDB();
+    const sb = supabaseAdmin();
+    const cleanEmail = email.toLowerCase().trim();
+    const hashed = await bcrypt.hash(password, 10);
 
-    let student = await Student.findOne({ email: email.toLowerCase().trim() });
-    if (student) {
-      student.password = password; // pre-save hook will hash it
-      student.name = name;
-      await student.save();
-      return NextResponse.json({ success: true, message: 'Existing student password reset.', id: student._id });
+    const { data: existing } = await sb.from('students').select('id').eq('email', cleanEmail).maybeSingle();
+
+    if (existing) {
+      const { error } = await sb.from('students').update({ password: hashed, name }).eq('id', existing.id);
+      if (error) throw error;
+      return NextResponse.json({ success: true, message: 'Existing student password reset.', id: existing.id });
     }
 
-    student = await Student.create({ name, email, phone: '', password });
-    return NextResponse.json({ success: true, message: 'Student created.', id: student._id });
+    const { data, error } = await sb
+      .from('students')
+      .insert({ name, email: cleanEmail, phone: '', password: hashed })
+      .select()
+      .single();
+    if (error) throw error;
+
+    return NextResponse.json({ success: true, message: 'Student created.', id: data.id });
   } catch (err: any) {
     return NextResponse.json({
       error: 'SEED_FAILED',
       name: err?.name || null,
       message: err?.message || String(err),
-      stack: process.env.NODE_ENV === 'production' ? undefined : err?.stack,
     }, { status: 500 });
   }
 }

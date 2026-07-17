@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
-import Student from '@/lib/models/Student';
-import Course from '@/lib/models/Course';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { getStudentFromCookie } from '@/lib/auth';
 import { withErrorHandling } from '@/lib/apiHandler';
 
@@ -16,48 +14,39 @@ export const POST = withErrorHandling(async (req: Request) => {
     return NextResponse.json({ error: 'Course ID missing.' }, { status: 400 });
   }
 
-  await connectDB();
+  const sb = supabaseAdmin();
 
-  const course = await Course.findById(courseId);
+  const { data: course, error: courseErr } = await sb.from('courses').select('*').eq('id', courseId).maybeSingle();
+  if (courseErr) throw courseErr;
   if (!course) {
     return NextResponse.json({ error: 'Course not found.' }, { status: 404 });
   }
 
-  const student = await Student.findById(session.id);
-  if (!student) {
-    return NextResponse.json({ error: 'Student not found.' }, { status: 404 });
-  }
+  const { data: already } = await sb
+    .from('enrollments')
+    .select('id')
+    .eq('student_id', session.id)
+    .eq('course_id', courseId)
+    .maybeSingle();
 
-  const already = student.enrollments.find((e: any) => e.course.toString() === courseId);
   if (already) {
     return NextResponse.json({ success: true, message: 'Already enrolled.', alreadyEnrolled: true });
   }
 
-  if (!course.isFree) {
-    // Payment gateway not wired up yet — enrollment is granted directly (payment bypassed).
-    student.enrollments.push({
-      course: course._id,
-      enrolledAt: new Date(),
-      amountPaid: course.fee || 0,
-      paymentStatus: 'pending',
-      paymentId: 'bypass-manual',
-      progress: { completedModules: [] },
-    } as any);
+  // Payment gateway not wired up yet — enrollment is granted directly (payment bypassed for paid courses too).
+  const { error: insertErr } = await sb.from('enrollments').insert({
+    student_id: session.id,
+    course_id: courseId,
+    amount_paid: course.is_free ? 0 : (course.fee || 0),
+    payment_status: course.is_free ? 'free' : 'pending',
+    payment_id: course.is_free ? '' : 'bypass-manual',
+    completed_modules: [],
+  });
 
-    await student.save();
+  if (insertErr) throw insertErr;
 
-    return NextResponse.json({ success: true, message: 'Enrolled successfully! (Payment pending — will be collected separately.)' });
-  }
-
-  student.enrollments.push({
-    course: course._id,
-    enrolledAt: new Date(),
-    amountPaid: 0,
-    paymentStatus: 'free',
-    progress: { completedModules: [] },
-  } as any);
-
-  await student.save();
-
-  return NextResponse.json({ success: true, message: 'Enrolled successfully!' });
+  return NextResponse.json({
+    success: true,
+    message: course.is_free ? 'Enrolled successfully!' : 'Enrolled successfully! (Payment pending — will be collected separately.)',
+  });
 });
