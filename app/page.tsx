@@ -194,7 +194,8 @@ export default async function Home() {
       </section>
 
       {/* ── COURTS COVERAGE ── */}
-      <section className="section bg-[#0C1018]">
+      {/* OLD (dark navy): <section className="section bg-[#0C1018]"> */}
+      <section className="section court-section">
         <div className="container px-4 mx-auto">
           <div className="text-center mb-10">
             <p className="tag">Court Coverage</p>

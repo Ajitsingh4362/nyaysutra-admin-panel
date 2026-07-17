@@ -518,3 +518,19 @@ textarea:focus-visible,
   transform: scale(1.08) rotate(-4deg);
 }
 .pa-card h3, .pa-card p, .pa-card span { position: relative; z-index: 1; }
+
+/* ══════════════════ COURTS SECTION — SUBTLE WINE/RED PREMIUM TINT (Homepage only) ══════════════════ */
+.court-section {
+  position: relative;
+  background: linear-gradient(160deg, #1D1013 0%, #170F13 45%, #0C1018 100%);
+  overflow: hidden;
+}
+.court-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 12% 15%, rgba(155,42,42,0.14), transparent 55%),
+    radial-gradient(circle at 90% 85%, rgba(201,168,76,0.08), transparent 50%);
+  pointer-events: none;
+}
+.court-section > * { position: relative; z-index: 1; }
