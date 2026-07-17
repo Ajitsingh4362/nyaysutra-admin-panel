@@ -81,7 +81,7 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* ── Desktop: quick links + socials + lang ── */}
+        {/* ── Desktop: quick links + lang ── */}
         <div className="hidden min-[900px]:flex items-center gap-3 shrink-0">
           <Link
             href="/verify"
@@ -98,13 +98,6 @@ export default function Navbar() {
             My Courses
           </Link>
           <div className="w-px h-4 bg-[rgba(201,168,76,0.2)]" />
-          {socials.map(({ icon: Icon, href, label }) => (
-            <a key={label} href={href} target="_blank" rel="noreferrer" aria-label={label}
-              className="text-[rgba(197,187,171,0.5)] hover:text-[var(--gold)] transition-colors">
-              <Icon size={14} />
-            </a>
-          ))}
-          <div className="w-px h-4 bg-[rgba(201,168,76,0.2)] mx-1" />
           <LanguageSwitcher />
         </div>
 
