@@ -11,7 +11,7 @@ export const POST = withErrorHandling(async (req: Request) => {
 
   const { courseId, moduleIndex } = await req.json();
   if (!courseId || moduleIndex === undefined) {
-    return NextResponse.json({ error: 'courseId aur moduleIndex required hain.' }, { status: 400 });
+    return NextResponse.json({ error: 'courseId and moduleIndex are required.' }, { status: 400 });
   }
 
   const sb = supabaseAdmin();
@@ -25,7 +25,7 @@ export const POST = withErrorHandling(async (req: Request) => {
 
   if (findErr) throw findErr;
   if (!enrollment) {
-    return NextResponse.json({ error: 'Enrolled nahi ho is course me.' }, { status: 403 });
+    return NextResponse.json({ error: 'You are not enrolled in this course.' }, { status: 403 });
   }
 
   const completed: number[] = enrollment.completed_modules || [];

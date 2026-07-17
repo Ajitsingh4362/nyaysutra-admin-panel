@@ -63,7 +63,7 @@ export default function CoursePlayer() {
   //       <div className="container mx-auto px-4 text-center">
   //         <Lock size={28} className="mx-auto text-[var(--muted2)] mb-4"/>
   //         <h1 className="section-title">Please Login</h1>
-  //         <p className="muted mt-3">Ye course access karne ke liye login karo.</p>
+  //         <p className="muted mt-3">Login to access this course.</p>
   //         <Link href="/students/login" className="btn-gold mt-6">Login</Link>
   //       </div>
   //     </main>
@@ -149,7 +149,7 @@ export default function CoursePlayer() {
           <h1 className="font-display text-2xl font-bold mt-2">{course.title}</h1>
           {allCompleted && course.hasCertificate && (
             <div className="flex items-center gap-2 mt-3 text-sm text-green-400">
-              <Award size={16}/> Course complete! Certificate ke liye contact karo.
+              <Award size={16}/> Course complete! Contact us to receive your certificate.
             </div>
           )}
         </div>
@@ -251,10 +251,10 @@ export default function CoursePlayer() {
                           <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-center px-6">
                             <Video size={24} className="text-[var(--muted2)]"/>
                             <p className="text-sm text-[var(--muted2)]">
-                              Video yahan load nahi ho paya. Link direct video file (.mp4) ka nahi ho sakta.
+                              This video couldn't load. The link may not be a direct video file (.mp4).
                             </p>
                             <a href={embed.embedUrl} target="_blank" className="btn-outline text-xs py-1.5 px-3">
-                              Video seedha link me kholo
+                              Open video link directly
                             </a>
                           </div>
                         )}
@@ -270,7 +270,7 @@ export default function CoursePlayer() {
                         <p key={i} className="text-sm text-[var(--muted)] leading-relaxed mb-4 whitespace-pre-line">{p}</p>
                       ))
                     ) : (
-                      <p className="text-sm text-[var(--muted2)]">Is lesson ke liye abhi notes add nahi hue.</p>
+                      <p className="text-sm text-[var(--muted2)]">No notes have been added for this lesson yet.</p>
                     )}
                   </div>
                 )}
@@ -288,13 +288,13 @@ export default function CoursePlayer() {
                       </a>
                     )}
                     {!currentModule.pdfUrl && !currentModule.audioUrl && (
-                      <p className="text-sm text-[var(--muted2)]">Koi resources abhi available nahi hain.</p>
+                      <p className="text-sm text-[var(--muted2)]">No resources available yet.</p>
                     )}
                   </div>
                 )}
 
                 {visibleTabs.length === 0 && (
-                  <p className="text-sm text-[var(--muted2)]">Is module ke liye content jald add hoga.</p>
+                  <p className="text-sm text-[var(--muted2)]">Content for this module is coming soon.</p>
                 )}
 
                 <div className="flex items-center justify-between gap-3 pt-5 mt-5 border-t border-[rgba(201,168,76,0.1)] flex-wrap">
@@ -325,7 +325,7 @@ export default function CoursePlayer() {
               </div>
             ) : (
               <div className="card text-center py-14">
-                <p className="muted">Is course me abhi koi module add nahi hua hai.</p>
+                <p className="muted">No modules have been added to this course yet.</p>
               </div>
             )}
           </div>

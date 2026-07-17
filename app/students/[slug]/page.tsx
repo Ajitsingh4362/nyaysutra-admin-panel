@@ -62,7 +62,7 @@ export default function CourseDetail() {
         body: JSON.stringify({ courseId: course._id }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Enroll nahi ho paya.');
+      if (!res.ok) throw new Error(data.error || 'Could not enroll. Please try again.');
       setEnrolled(true);
       router.push(`/students/learn/${course.slug || course._id}`);
     } catch (err: any) {
@@ -195,7 +195,7 @@ export default function CourseDetail() {
                 )}
                 {!loggedIn && (
                   <p className="text-xs text-[var(--muted2)] text-center">
-                    <Link href="/students/login" className="text-[var(--gold)]">Login</Link> ya <Link href="/students/register" className="text-[var(--gold)]">Register</Link> karke apna progress track karo.
+                    <Link href="/students/login" className="text-[var(--gold)]">Login</Link> or <Link href="/students/register" className="text-[var(--gold)]">Register</Link> to track your progress.
                   </p>
                 )}
               </div>

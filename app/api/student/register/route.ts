@@ -8,10 +8,10 @@ export const POST = withErrorHandling(async (req: Request) => {
   const { name, email, phone, password } = await req.json();
 
   if (!name || !email || !password) {
-    return NextResponse.json({ error: 'Name, email aur password required hain.' }, { status: 400 });
+    return NextResponse.json({ error: 'Name, email and password are required.' }, { status: 400 });
   }
   if (password.length < 6) {
-    return NextResponse.json({ error: 'Password kam se kam 6 characters ka hona chahiye.' }, { status: 400 });
+    return NextResponse.json({ error: 'Password must be at least 6 characters.' }, { status: 400 });
   }
 
   const sb = supabaseAdmin();
@@ -19,7 +19,7 @@ export const POST = withErrorHandling(async (req: Request) => {
 
   const { data: existing } = await sb.from('students').select('id').eq('email', cleanEmail).maybeSingle();
   if (existing) {
-    return NextResponse.json({ error: 'Is email se account already exist karta hai. Login karo.' }, { status: 409 });
+    return NextResponse.json({ error: 'An account with this email already exists. Please login instead.' }, { status: 409 });
   }
 
   const hashed = await bcrypt.hash(password, 10);

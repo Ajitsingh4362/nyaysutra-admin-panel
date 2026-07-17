@@ -6,7 +6,7 @@ import { withErrorHandling } from '@/lib/apiHandler';
 export const POST = withErrorHandling(async (req: Request) => {
   const session = getStudentFromCookie();
   if (!session) {
-    return NextResponse.json({ error: 'Enroll karne ke liye pehle login karo.' }, { status: 401 });
+    return NextResponse.json({ error: 'Please login first to enroll.' }, { status: 401 });
   }
 
   const { courseId } = await req.json();

@@ -75,7 +75,7 @@ export default function CoursesPage() {
           ) : filtered.length === 0 ? (
             <div className="card text-center py-16">
               <GraduationCap size={32} className="mx-auto text-[var(--muted2)] mb-3 opacity-40"/>
-              <p className="muted">{courses.length === 0 ? 'Courses jald add honge. Please check back soon.' : 'Koi matching course nahi mila.'}</p>
+              <p className="muted">{courses.length === 0 ? 'Courses will be added soon. Please check back later.' : 'No matching courses found.'}</p>
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">

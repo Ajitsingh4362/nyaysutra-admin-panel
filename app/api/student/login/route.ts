@@ -7,7 +7,7 @@ import { withErrorHandling } from '@/lib/apiHandler';
 export const POST = withErrorHandling(async (req: Request) => {
   const { email, password } = await req.json();
   if (!email || !password) {
-    return NextResponse.json({ error: 'Email aur password required hain.' }, { status: 400 });
+    return NextResponse.json({ error: 'Email and password are required.' }, { status: 400 });
   }
 
   const sb = supabaseAdmin();

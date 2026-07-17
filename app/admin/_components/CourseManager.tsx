@@ -226,7 +226,7 @@ function CourseForm({ course, onSave, onCancel }: { course: Course|null; onSave:
                       onChange={e=>updateModule(idx,'content',e.target.value)}
                       className="input text-sm font-mono leading-relaxed"
                       style={{minHeight:180}}
-                      placeholder={'Full written notes for this lesson, jaise Coding Ninjas ke notes tab me hota hai.\n\nParagraphs ke beech ek blank line chhodo — wahi se naya paragraph banega.'}
+                      placeholder={'Full written notes for this lesson, like a Coding Ninjas-style notes tab.\n\nLeave a blank line between paragraphs to start a new one.'}
                     />
                   </div>
                   <div className="grid sm:grid-cols-3 gap-2">

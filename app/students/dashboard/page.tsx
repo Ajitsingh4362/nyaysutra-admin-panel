@@ -35,7 +35,7 @@ export default function StudentDashboard() {
       <main className="section overflow-x-hidden">
         <div className="container mx-auto px-4 text-center">
           <h1 className="section-title">Please Login</h1>
-          <p className="muted mt-3">Apna dashboard dekhne ke liye login karo.</p>
+          <p className="muted mt-3">Please login to view your dashboard.</p>
           <Link href="/students/login" className="btn-gold mt-6">Login</Link>
         </div>
       </main>
@@ -58,8 +58,8 @@ export default function StudentDashboard() {
         {enrollments.length === 0 ? (
           <div className="card text-center py-14">
             <BookOpen size={32} className="mx-auto text-[var(--muted2)] mb-4"/>
-            <h3 className="font-display text-xl font-semibold">Abhi koi course enroll nahi kiya</h3>
-            <p className="muted mt-2">Courses browse karo aur seekhna shuru karo.</p>
+            <h3 className="font-display text-xl font-semibold">You haven't enrolled in any courses yet</h3>
+            <p className="muted mt-2">Browse courses and start learning.</p>
             <Link href="/students#courses" className="btn-gold mt-6">Browse Courses</Link>
           </div>
         ) : (
