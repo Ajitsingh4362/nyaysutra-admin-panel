@@ -80,18 +80,18 @@ export default function LanguageSwitcher() {
   return (
     <div ref={ref} className="relative">
       <button onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[rgba(201,168,76,0.22)] bg-[rgba(201,168,76,0.05)] hover:border-[rgba(201,168,76,0.45)] hover:bg-[rgba(201,168,76,0.1)] transition-all text-sm text-[var(--ivory)]">
-        <Globe size={13} className="text-[var(--gold)]"/>
+        className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[rgba(200,50,50,0.35)] bg-[rgba(200,50,50,0.08)] hover:border-[rgba(220,60,60,0.6)] hover:bg-[rgba(200,50,50,0.15)] transition-all text-sm text-[var(--ivory)]">
+        <Globe size={13} className="text-[#E05555]"/>
         <span className="text-base leading-none">{selected.flag}</span>
         <span className="hidden sm:inline text-[11px] font-medium max-w-[60px] truncate">{selected.native}</span>
-        <ChevronDown size={11} className={`text-[var(--gold)] transition-transform shrink-0 ${open ? 'rotate-180' : ''}`}/>
+        <ChevronDown size={11} className={`text-[#E05555] transition-transform shrink-0 ${open ? 'rotate-180' : ''}`}/>
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-52 bg-[#0C1018] border border-[rgba(201,168,76,0.18)] rounded-2xl shadow-2xl overflow-hidden z-[200] max-h-72 overflow-y-auto">
+        <div className="absolute right-0 top-full mt-2 w-52 bg-[#0C1018] border border-[rgba(200,50,50,0.3)] rounded-2xl shadow-2xl overflow-hidden z-[200] max-h-72 overflow-y-auto">
           {languages.map(lang => (
             <button key={lang.code} onClick={() => changeLang(lang)}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:bg-[rgba(201,168,76,0.08)] ${selected.code === lang.code ? 'bg-[rgba(201,168,76,0.1)] text-[var(--gold)]' : 'text-[var(--muted2)]'}`}>
+              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:bg-[rgba(200,50,50,0.1)] ${selected.code === lang.code ? 'bg-[rgba(200,50,50,0.12)] text-[#E05555]' : 'text-[var(--muted2)]'}`}>
               <span className="text-lg leading-none">{lang.flag}</span>
               <div>
                 <div className="text-[11px] font-semibold text-[var(--ivory)]">{lang.name}</div>
