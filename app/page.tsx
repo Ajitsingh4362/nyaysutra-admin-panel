@@ -140,6 +140,19 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ── ANNOUNCEMENT MARQUEE STRIP ── */}
+      <div className="marquee-strip">
+        <div className="marquee-track">
+          {[0, 1].map(copy => (
+            <div key={copy} className="flex items-center">
+              <span className="marquee-item">🎓 New Course Launching Soon on NyayaSutra <span className="marquee-dot">●</span> Enroll Now to Get Early Access</span>
+              <span className="marquee-item">⚖️ Strategic Litigation <span className="marquee-dot">●</span> Legal Research <span className="marquee-dot">●</span> Court Support</span>
+              <span className="marquee-item">📞 First Consultation Free <span className="marquee-dot">●</span> Book Yours Today</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* ── ABOUT STRIP ── */}
       {/* OLD (dark): <section className="section bg-[#0C1018] border-y border-[rgba(201,168,76,0.1)]"> */}
       <section className="section section-light border-y border-[rgba(139,107,42,0.15)]">
