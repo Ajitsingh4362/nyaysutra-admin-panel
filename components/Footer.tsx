@@ -94,13 +94,13 @@ export default function Footer() {
       </div>
 
       {/* Bottom */}
-      <div className="border-t border-[rgba(201,168,76,0.08)] py-5 px-4">
+      <div className="py-5 px-4" style={{ background: '#8B1414', borderTop: '1px solid rgba(255,255,255,0.12)' }}>
         <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-[11px] text-[var(--muted2)]">© 2026 NyayaSutra — Legal Intelligence. All Rights Reserved. | Adv. A.K. Tripathi</p>
-          <div className="flex gap-4 text-[11px] text-[var(--muted2)]">
-            <Link href="/contact" className="hover:text-[var(--gold)] transition-colors">Privacy Policy</Link>
-            <Link href="/contact" className="hover:text-[var(--gold)] transition-colors">Disclaimer</Link>
-            <Link href="/contact" className="hover:text-[var(--gold)] transition-colors">Terms</Link>
+          <p className="text-[11px] text-white">© 2026 NyayaSutra — Legal Intelligence. All Rights Reserved. | Adv. A.K. Tripathi</p>
+          <div className="flex gap-4 text-[11px] text-white">
+            <Link href="/contact" className="hover:text-[rgba(255,255,255,0.7)] transition-colors">Privacy Policy</Link>
+            <Link href="/contact" className="hover:text-[rgba(255,255,255,0.7)] transition-colors">Disclaimer</Link>
+            <Link href="/contact" className="hover:text-[rgba(255,255,255,0.7)] transition-colors">Terms</Link>
           </div>
         </div>
       </div>

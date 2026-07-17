@@ -80,11 +80,12 @@ export default function LanguageSwitcher() {
   return (
     <div ref={ref} className="relative">
       <button onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[rgba(200,50,50,0.35)] bg-[rgba(200,50,50,0.08)] hover:border-[rgba(220,60,60,0.6)] hover:bg-[rgba(200,50,50,0.15)] transition-all text-sm text-[var(--ivory)]">
-        <Globe size={13} className="text-[#E05555]"/>
+        className="flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all text-sm text-white"
+        style={{ background: '#B41E1E', border: '1px solid rgba(255,255,255,0.15)' }}>
+        <Globe size={13} className="text-white"/>
         <span className="text-base leading-none">{selected.flag}</span>
-        <span className="hidden sm:inline text-[11px] font-medium max-w-[60px] truncate">{selected.native}</span>
-        <ChevronDown size={11} className={`text-[#E05555] transition-transform shrink-0 ${open ? 'rotate-180' : ''}`}/>
+        <span className="hidden sm:inline text-[11px] font-medium max-w-[60px] truncate text-white">{selected.native}</span>
+        <ChevronDown size={11} className={`text-white transition-transform shrink-0 ${open ? 'rotate-180' : ''}`}/>
       </button>
 
       {open && (
