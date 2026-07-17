@@ -173,13 +173,15 @@ export default async function Home() {
             {practiceAreas.map(({ icon: Icon, title, slug, desc }) => (
               <StaggerItem key={slug}>
                 <TiltCard className="group h-full">
-                  <Link href={`/practice-areas/${slug}`} className="card-link h-full block">
-                    <div className="w-10 h-10 rounded-xl bg-[rgba(201,168,76,0.1)] flex items-center justify-center mb-3">
-                      <Icon size={18} className="text-[var(--gold)]"/>
+                  {/* OLD: <Link href={`/practice-areas/${slug}`} className="card-link h-full block"> */}
+                  <Link href={`/practice-areas/${slug}`} className="pa-card h-full block">
+                    {/* OLD icon wrap: <div className="w-10 h-10 rounded-xl bg-[rgba(201,168,76,0.1)] flex items-center justify-center mb-3"> */}
+                    <div className="pa-icon mb-3">
+                      <Icon size={19} className="text-[var(--gold2)]"/>
                     </div>
                     <h3 className="font-semibold text-sm leading-tight">{title}</h3>
                     <p className="text-[var(--muted2)] text-xs mt-1.5 leading-snug line-clamp-2 hidden sm:block">{desc}</p>
-                    <span className="text-[var(--gold)] text-xs mt-3 inline-flex items-center gap-0.5 font-semibold">Explore <ChevronRight size={10}/></span>
+                    <span className="text-[var(--gold2)] text-xs mt-3 inline-flex items-center gap-0.5 font-semibold">Explore <ChevronRight size={10}/></span>
                   </Link>
                 </TiltCard>
               </StaggerItem>
