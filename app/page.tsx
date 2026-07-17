@@ -139,7 +139,8 @@ export default async function Home() {
       </section>
 
       {/* ── ABOUT STRIP ── */}
-      <section className="section bg-[#0C1018] border-y border-[rgba(201,168,76,0.1)]">
+      {/* OLD (dark): <section className="section bg-[#0C1018] border-y border-[rgba(201,168,76,0.1)]"> */}
+      <section className="section section-light border-y border-[rgba(139,107,42,0.15)]">
         <div className="container px-4 mx-auto grid lg:grid-cols-2 gap-10 items-center">
           <div>
             <p className="tag">About NyayaSutra</p>
@@ -301,7 +302,8 @@ export default async function Home() {
       </section>
 
       {/* ── LATEST BLOG ── */}
-      <section className="section bg-[#0C1018]">
+      {/* OLD (dark): <section className="section bg-[#0C1018]"> */}
+      <section className="section section-light">
         <div className="container px-4 mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
             <div>
