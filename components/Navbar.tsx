@@ -46,13 +46,18 @@ export default function Navbar() {
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname?.startsWith(href);
 
+  const isHome = pathname === '/';
+
   return (
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-300
-        ${scrolled
-          ? 'bg-[#07090F]/98 shadow-[0_4px_40px_rgba(0,0,0,0.55)]'
-          : 'bg-[#07090F]/95'}
-        backdrop-blur-xl border-b border-[rgba(201,168,76,0.12)]`}
+        ${/* OLD (all pages, near-black): scrolled ? 'bg-[#07090F]/98 shadow-[0_4px_40px_rgba(0,0,0,0.55)]' : 'bg-[#07090F]/95' */ ''}
+        ${isHome
+          ? (scrolled
+              ? 'bg-gradient-to-r from-[#1B160E]/98 via-[#221B10]/98 to-[#1B160E]/98 shadow-[0_4px_40px_rgba(0,0,0,0.5)]'
+              : 'bg-gradient-to-r from-[#1B160E]/95 via-[#221B10]/95 to-[#1B160E]/95')
+          : (scrolled ? 'bg-[#07090F]/98 shadow-[0_4px_40px_rgba(0,0,0,0.55)]' : 'bg-[#07090F]/95')}
+        backdrop-blur-xl border-b ${isHome ? 'border-[rgba(201,168,76,0.22)]' : 'border-[rgba(201,168,76,0.12)]'}`}
     >
       <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-5 flex items-center justify-between h-20 gap-3">
 
@@ -74,7 +79,12 @@ export default function Navbar() {
             <Link
               key={href} href={href}
               className={`text-[11px] font-semibold uppercase tracking-[0.09em] transition-colors whitespace-nowrap
-                ${isActive(href) ? 'text-[var(--gold)]' : 'text-[rgba(245,240,232,0.7)] hover:text-[var(--gold)]'}`}
+                ${isActive(href)
+                  ? 'text-[var(--gold)]'
+                  : isHome
+                    /* OLD (all pages): 'text-[rgba(245,240,232,0.7)] hover:text-[var(--gold)]' */
+                    ? 'text-[rgba(245,240,232,0.92)] hover:text-[var(--gold)]'
+                    : 'text-[rgba(245,240,232,0.7)] hover:text-[var(--gold)]'}`}
             >
               {label}
             </Link>
