@@ -81,8 +81,23 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* ── Desktop: socials + lang ── */}
-        <div className="hidden min-[900px]:flex items-center gap-2.5 shrink-0">
+        {/* ── Desktop: quick links + socials + lang ── */}
+        <div className="hidden min-[900px]:flex items-center gap-3 shrink-0">
+          <Link
+            href="/verify"
+            className="flex items-center gap-1.5 text-[11px] font-semibold text-[var(--gold)] whitespace-nowrap"
+          >
+            <ShieldCheck size={13} />
+            Verify Certificate
+          </Link>
+          <Link
+            href="/students/dashboard"
+            className="flex items-center gap-1.5 text-[11px] font-semibold text-[var(--gold)] whitespace-nowrap"
+          >
+            <GraduationCap size={13} />
+            My Courses
+          </Link>
+          <div className="w-px h-4 bg-[rgba(201,168,76,0.2)]" />
           {socials.map(({ icon: Icon, href, label }) => (
             <a key={label} href={href} target="_blank" rel="noreferrer" aria-label={label}
               className="text-[rgba(197,187,171,0.5)] hover:text-[var(--gold)] transition-colors">
