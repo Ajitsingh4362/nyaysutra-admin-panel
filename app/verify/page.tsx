@@ -83,7 +83,7 @@ function VerifyContent() {
 
       {/* Search */}
       <section className="section">
-        <div className="container px-4 mx-auto max-w-xl">
+        <div className="container px-4 mx-auto !max-w-xl">
           <div className="card">
             <label className="block text-[10px] text-[var(--gold)] mb-2 font-bold uppercase tracking-wider">Certificate Number</label>
             <div className="flex flex-col sm:flex-row gap-3">
@@ -190,7 +190,7 @@ function VerifyContent() {
 
       {/* Info */}
       <section className="section-sm bg-[#0C1018] px-4">
-        <div className="container mx-auto max-w-xl text-center">
+        <div className="container mx-auto !max-w-xl text-center">
           <p className="muted text-sm">
             All certificates issued by NyayaSutra — Legal Intelligence carry a unique certificate number. If you have questions about a certificate, please{' '}
             <Link href="/contact" className="text-[var(--gold)] hover:underline">contact us</Link>.

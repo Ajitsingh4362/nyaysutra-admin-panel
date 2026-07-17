@@ -155,7 +155,7 @@ export default function About() {
 
       {/* Timeline */}
       <section className="section bg-[#0C1018]">
-        <div className="container px-4 mx-auto max-w-3xl">
+        <div className="container px-4 mx-auto !max-w-3xl">
           <div className="text-center mb-12">
             <p className="tag">Our Journey</p>
             <h2 className="section-title mt-3">The NyayaSutra Story</h2>

@@ -33,7 +33,8 @@ export default function StudentRegister() {
 
   return (
     <main className="section min-h-[70vh] flex items-center">
-      <div className="container px-4 mx-auto max-w-md">
+      <div className="container px-4 mx-auto">
+      <div className="max-w-md mx-auto">
         <div className="card">
           <p className="tag">Create Account</p>
           <h1 className="font-display text-2xl font-bold mt-2 mb-6">Join NyayaSutra</h1>
@@ -71,6 +72,7 @@ export default function StudentRegister() {
             Already have an account? <Link href="/students/login" className="text-[var(--gold)] font-semibold">Login</Link>
           </p>
         </div>
+      </div>
       </div>
     </main>
   );
