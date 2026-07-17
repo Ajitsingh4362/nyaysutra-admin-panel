@@ -79,13 +79,15 @@ export default async function Home() {
       <VisitorPopup />
 
       {/* ── HERO ── */}
-      <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+      {/* OLD: <section className="relative min-h-[92vh] flex items-center overflow-hidden"> */}
+      <section className="relative min-h-[80vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#07090F] via-[#0C1018] to-[#07090F]"/>
         <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-[radial-gradient(circle,rgba(201,168,76,0.1),transparent_65%)] pointer-events-none"/>
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(201,168,76,0.05),transparent_60%)] pointer-events-none"/>
         <GoldParticles count={22}/>
 
-        <div className="container px-4 py-20 lg:py-28 grid lg:grid-cols-2 gap-12 items-center relative z-10 w-full mx-auto">
+        {/* OLD: <div className="container px-4 py-20 lg:py-28 grid lg:grid-cols-2 gap-12 items-center relative z-10 w-full mx-auto"> */}
+        <div className="container px-4 py-10 lg:py-14 grid lg:grid-cols-2 gap-12 items-center relative z-10 w-full mx-auto">
           <div className="animate-fadeup">
             <p className="tag mb-4">NyayaSutra — Legal Intelligence</p>
             <h1 className="section-title leading-tight">
