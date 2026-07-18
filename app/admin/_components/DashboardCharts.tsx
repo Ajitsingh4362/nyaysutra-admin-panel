@@ -12,7 +12,7 @@ interface Blog {
 }
 
 // ── SVG Bar Chart ────────────────────────────────────────────────
-function BarChart({ data, color = '#C9A84C', label = '' }: {
+function BarChart({ data, color = '#7A5E20', label = '' }: {
   data: { label: string; value: number }[];
   color?: string;
   label?: string;
@@ -30,7 +30,7 @@ function BarChart({ data, color = '#C9A84C', label = '' }: {
               x1={30} y1={H - H * p} x2={W - 10} y2={H - H * p}
               stroke="rgba(201,168,76,0.1)" strokeWidth={1}
             />
-            <text x={24} y={H - H * p + 4} textAnchor="end" fontSize={9} fill="rgba(197,187,171,0.5)">
+            <text x={24} y={H - H * p + 4} textAnchor="end" fontSize={9} fill="#9C8B6E">
               {Math.round(max * p)}
             </text>
           </g>
@@ -62,7 +62,7 @@ function BarChart({ data, color = '#C9A84C', label = '' }: {
                 </text>
               )}
               {/* X label */}
-              <text x={x + BAR_W / 2} y={H + 15} textAnchor="middle" fontSize={9} fill="rgba(197,187,171,0.6)">
+              <text x={x + BAR_W / 2} y={H + 15} textAnchor="middle" fontSize={9} fill="#8A7A5E">
                 {d.label}
               </text>
             </g>
@@ -73,7 +73,7 @@ function BarChart({ data, color = '#C9A84C', label = '' }: {
         <line x1={30} y1={0} x2={30} y2={H} stroke="rgba(201,168,76,0.2)" strokeWidth={1}/>
         <line x1={30} y1={H} x2={W - 10} y2={H} stroke="rgba(201,168,76,0.2)" strokeWidth={1}/>
       </svg>
-      {label && <p style={{ textAlign: 'center', fontSize: 10, color: 'rgba(197,187,171,0.5)', marginTop: 2 }}>{label}</p>}
+      {label && <p style={{ textAlign: 'center', fontSize: 10, color: '#9C8B6E', marginTop: 2 }}>{label}</p>}
     </div>
   );
 }
@@ -81,7 +81,7 @@ function BarChart({ data, color = '#C9A84C', label = '' }: {
 // ── SVG Donut Chart ──────────────────────────────────────────────
 function DonutChart({ data }: { data: { label: string; value: number; color: string }[] }) {
   const total = data.reduce((s, d) => s + d.value, 0);
-  if (total === 0) return <p style={{ textAlign: 'center', fontSize: 12, color: 'rgba(197,187,171,0.5)', padding: '20px 0' }}>No data yet</p>;
+  if (total === 0) return <p style={{ textAlign: 'center', fontSize: 12, color: '#9C8B6E', padding: '20px 0' }}>No data yet</p>;
 
   const R = 60; const CX = 80; const CY = 75;
   let startAngle = -90;
@@ -111,16 +111,16 @@ function DonutChart({ data }: { data: { label: string; value: number; color: str
           <path key={i} d={describeArc(CX, CY, R, s.startAngle, s.startAngle + s.angle - 0.5)} fill={s.color} opacity={0.85}/>
         ))}
         {/* Center hole */}
-        <circle cx={CX} cy={CY} r={R * 0.55} fill="#0C1018"/>
-        <text x={CX} y={CY - 6} textAnchor="middle" fontSize={18} fill="#C9A84C" fontWeight="bold">{total}</text>
-        <text x={CX} y={CY + 10} textAnchor="middle" fontSize={8} fill="rgba(197,187,171,0.6)">TOTAL</text>
+        <circle cx={CX} cy={CY} r={R * 0.55} fill="#F7F2E7"/>
+        <text x={CX} y={CY - 6} textAnchor="middle" fontSize={18} fill="#7A5E20" fontWeight="bold">{total}</text>
+        <text x={CX} y={CY + 10} textAnchor="middle" fontSize={8} fill="#8A7A5E">TOTAL</text>
       </svg>
       <div style={{ flex: 1, minWidth: 0 }}>
         {slices.map((s, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
             <div style={{ width: 10, height: 10, borderRadius: 2, backgroundColor: s.color, flexShrink: 0 }}/>
-            <span style={{ fontSize: 11, color: 'rgba(245,240,232,0.75)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.label}</span>
-            <span style={{ fontSize: 11, fontWeight: 700, color: '#C9A84C', flexShrink: 0 }}>{s.value}</span>
+            <span style={{ fontSize: 11, color: '#5A4E3C', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.label}</span>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#7A5E20', flexShrink: 0 }}>{s.value}</span>
           </div>
         ))}
       </div>
@@ -129,7 +129,7 @@ function DonutChart({ data }: { data: { label: string; value: number; color: str
 }
 
 // ── Mini Sparkline ───────────────────────────────────────────────
-function Sparkline({ data, color = '#C9A84C' }: { data: number[]; color?: string }) {
+function Sparkline({ data, color = '#7A5E20' }: { data: number[]; color?: string }) {
   if (data.length < 2) return null;
   const max = Math.max(...data, 1);
   const W = 120; const H = 36;
@@ -204,7 +204,7 @@ export default function DashboardCharts() {
   });
 
   // Service breakdown for donut
-  const DONUT_COLORS = ['#C9A84C','#9C7A2E','#E8C96A','#7A5E20','#F5E6B8','#5A4E3C'];
+  const DONUT_COLORS = ['#7A5E20','#9C7A2E','#B8923D','#5A4E3C','#C9A84C','#3D3320'];
   const serviceMap: Record<string, number> = {};
   inquiries.forEach(i => { const s = i.service || 'General'; serviceMap[s] = (serviceMap[s] || 0) + 1; });
   const serviceData = Object.entries(serviceMap)
@@ -243,7 +243,7 @@ export default function DashboardCharts() {
       {/* Summary stat cards with sparklines */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: 'Total Inquiries', value: totalInq, icon: Inbox, color: '#C9A84C', spark: sparkData },
+          { label: 'Total Inquiries', value: totalInq, icon: Inbox, color: '#7A5E20', spark: sparkData },
           { label: 'New / Unread', value: newInq, icon: TrendingUp, color: '#ef4444', spark: sparkData.map((v,i) => i===5?newInq:0) },
           { label: 'This Week', value: thisWeekInq, icon: BarChart2, color: '#10b981', spark: weeklyInq.map(w=>w.value) },
           { label: 'Blogs Published', value: publishedBlogs, icon: FileText, color: '#3b82f6', spark: [] },
@@ -278,7 +278,7 @@ export default function DashboardCharts() {
           {totalInq === 0 ? (
             <p className="text-center text-xs text-[var(--muted2)] py-8">No inquiries yet — charts will appear automatically as inquiries come in.</p>
           ) : (
-            <BarChart data={monthlyInq} color="#C9A84C"/>
+            <BarChart data={monthlyInq} color="#7A5E20"/>
           )}
         </div>
 
