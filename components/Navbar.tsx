@@ -46,7 +46,8 @@ export default function Navbar() {
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname?.startsWith(href);
 
-  const isHome = pathname === '/';
+  // Cream header design now applies site-wide (previously homepage-only).
+  const isHome = true;
 
   return (
     <header

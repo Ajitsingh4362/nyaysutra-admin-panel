@@ -95,6 +95,29 @@ export default async function Home() {
               <span className="shimmer-gold">Legal Research</span><br/>
               & Court Support
             </h1>
+
+            {/* Mobile-only founder image — appears right below the heading on small screens; desktop layout is unaffected */}
+            <div className="lg:hidden flex justify-center my-6 animate-fadeup-2">
+              <div className="relative w-full max-w-[280px]">
+                <div className="absolute -inset-4 bg-[radial-gradient(circle,rgba(201,168,76,0.12),transparent_70%)] rounded-3xl"/>
+                <div className="glass rounded-[2rem] p-3 relative">
+                  <Image
+                    src="/ak-tripathi.jpeg"
+                    alt="Adv. A.K. Tripathi — Founder NyayaSutra"
+                    width={280}
+                    height={330}
+                    className="rounded-[1.5rem] w-full object-cover object-top"
+                    style={{ maxHeight: '330px' }}
+                    priority
+                  />
+                  <div className="absolute -bottom-4 left-4 glass rounded-2xl px-4 py-2.5">
+                    <p className="text-xs text-[var(--gold)] font-semibold">Adv. A.K. Tripathi</p>
+                    <p className="text-[10px] text-[var(--muted2)]">Advocate & Founder · UPSC Mains Qualified</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <p className="muted text-base sm:text-lg mt-6 max-w-xl leading-relaxed">
               Supreme Court · High Courts · District Courts · Arbitration · International & Corporate Legal Support.
               A modern legal intelligence and litigation support platform for professional legal assistance, strategic research, drafting, and advisory across India.
@@ -116,8 +139,8 @@ export default async function Home() {
             </div>
           </div>
 
-          {/* Founder image */}
-          <div className="flex justify-center animate-fadeup-2">
+          {/* Founder image — desktop only (mobile version rendered above, right under the heading) */}
+          <div className="hidden lg:flex justify-center animate-fadeup-2">
             <div className="relative w-full max-w-[340px]">
               <div className="absolute -inset-4 bg-[radial-gradient(circle,rgba(201,168,76,0.12),transparent_70%)] rounded-3xl"/>
               <div className="glass rounded-[2rem] p-3 relative">

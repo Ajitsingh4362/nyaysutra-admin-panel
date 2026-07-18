@@ -36,7 +36,8 @@ const tribunals = [
 export default function Courts() {
   return (
     <main className="overflow-x-hidden">
-      <section className="relative py-20 px-4 overflow-hidden bg-[#0C1018]">
+      {/* OLD: <section className="relative py-20 px-4 overflow-hidden bg-[#0C1018]"> */}
+      <section className="relative py-20 px-4 overflow-hidden court-section">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(201,168,76,0.07),transparent_60%)] pointer-events-none"/>
         <div className="container mx-auto relative z-10">
           <p className="tag">Jurisdiction & Coverage</p>
