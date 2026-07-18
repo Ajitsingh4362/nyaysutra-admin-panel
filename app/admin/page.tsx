@@ -276,7 +276,7 @@ function BlogForm({ blog, onSave, onCancel }: {
   return (
     <div className="max-w-[960px] mx-auto">
       {/* Top bar */}
-      <div className="flex items-center justify-between mb-5 flex-wrap gap-3 sticky top-16 z-20 bg-[#07090F] py-3 -mx-1 px-1">
+      <div className="flex items-center justify-between mb-5 flex-wrap gap-3 sticky top-16 z-20 bg-[var(--bg)] py-3 -mx-1 px-1">
         <button onClick={onCancel} className="flex items-center gap-2 text-xs text-[var(--muted2)] hover:text-[var(--ivory)] transition-colors">
           <X size={14}/> Cancel
         </button>
@@ -610,7 +610,7 @@ export default function AdminPanel() {
   // ── SESSION CHECK (brief loading state while we verify the cookie) ──
   if (checkingSession) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#07090F]">
+      <div className="admin-cream min-h-screen flex items-center justify-center">
         <RefreshCw size={24} className="animate-spin text-[var(--gold)]" />
       </div>
     );
@@ -619,7 +619,7 @@ export default function AdminPanel() {
   // ── LOGIN PAGE ───────────────────────────────────────────────────
   if (!authed) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 bg-[#07090F]">
+      <div className="admin-cream min-h-screen flex items-center justify-center px-4">
         <div className="w-full max-w-[400px]">
           <div className="glass rounded-3xl p-8">
             <div className="text-center mb-7">
@@ -669,7 +669,7 @@ export default function AdminPanel() {
   const isEditing = tab === 'blog-editor';
 
   return (
-    <div className="min-h-screen flex bg-[#07090F] font-sans">
+    <div className="admin-cream min-h-screen flex font-sans">
       {/* Mobile overlay */}
       {sideOpen && <div className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setSideOpen(false)}/>}
 
@@ -717,7 +717,7 @@ export default function AdminPanel() {
       {/* ── MAIN ── */}
       <div className="admin-main flex-1 flex flex-col min-w-0 overflow-x-hidden">
         {/* Top bar */}
-        <div className="sticky top-0 z-30 border-b border-[rgba(201,168,76,0.08)] bg-[#07090F]/97 backdrop-blur-xl px-4 sm:px-5 py-3 flex items-center justify-between gap-3">
+        <div className="sticky top-0 z-30 border-b border-[rgba(201,168,76,0.08)] bg-[var(--bg)]/97 backdrop-blur-xl px-4 sm:px-5 py-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <button className="lg:hidden p-1.5 text-[var(--ivory)]" onClick={() => setSideOpen(v => !v)}>
               <Menu size={18}/>
