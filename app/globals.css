@@ -581,6 +581,7 @@ textarea:focus-visible,
   --bdr:   rgba(139,107,42,0.22);
   --bdr2:  rgba(139,107,42,0.12);
   background: #F7F2E7;
+  color: var(--ivory);
 }
 .admin-cream .admin-sidebar {
   background: linear-gradient(180deg, #FAF6EC, #F0E8D6);
