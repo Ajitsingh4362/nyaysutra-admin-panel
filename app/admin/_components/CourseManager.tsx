@@ -51,6 +51,26 @@ function CourseForm({ course, onSave, onCancel }: { course: Course|null; onSave:
     reader.readAsDataURL(file);
   };
 
+  const [pdfUploadingIdx, setPdfUploadingIdx] = useState<number|null>(null);
+  const handlePdfUpload = async (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.type !== 'application/pdf') { alert('Please select a PDF file.'); return; }
+    if (file.size > 15 * 1024 * 1024) { alert('PDF is too large. Please keep it under 15 MB.'); return; }
+    setPdfUploadingIdx(idx);
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const res = await fetch('/api/upload-file', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ file: reader.result }) });
+        const data = await res.json();
+        if (data.url) updateModule(idx, 'pdfUrl', data.url);
+        else alert('Upload failed. Please try again.');
+      } catch { alert('Upload failed. Please try again.'); }
+      setPdfUploadingIdx(null);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const addModule = () => { setForm(p=>({...p, modules:[...p.modules, {...blankModule, order:p.modules.length}]})); setOpenModule(form.modules.length); };
   const removeModule = (idx:number) => setForm(p=>({...p, modules: p.modules.filter((_,i)=>i!==idx)}));
   const updateModule = (idx:number, k: keyof Module, v:any) => setForm(p=>({...p, modules: p.modules.map((m,i)=> i===idx ? {...m,[k]:v} : m)}));
@@ -230,9 +250,18 @@ function CourseForm({ course, onSave, onCancel }: { course: Course|null; onSave:
                     />
                   </div>
                   <div className="grid sm:grid-cols-3 gap-2">
-                    <div className="relative">
-                      <FileText size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted2)]"/>
-                      <input value={mod.pdfUrl} onChange={e=>updateModule(idx,'pdfUrl',e.target.value)} className="input text-xs pl-8" placeholder="PDF URL (downloadable notes)"/>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="relative flex-1">
+                          <FileText size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted2)]"/>
+                          <input value={mod.pdfUrl} onChange={e=>updateModule(idx,'pdfUrl',e.target.value)} className="input text-xs pl-8" placeholder="PDF URL (or upload →)"/>
+                        </div>
+                        <label className="btn-outline text-xs py-2.5 px-2.5 cursor-pointer shrink-0" title="Upload PDF from your computer">
+                          {pdfUploadingIdx===idx ? <RefreshCw size={12} className="animate-spin"/> : <Upload size={12}/>}
+                          <input type="file" accept="application/pdf" onChange={e=>handlePdfUpload(idx,e)} className="hidden" disabled={pdfUploadingIdx===idx}/>
+                        </label>
+                      </div>
+                      {mod.pdfUrl && <a href={mod.pdfUrl} target="_blank" className="text-[10px] text-[var(--gold)] mt-1 inline-block">✓ PDF attached — view</a>}
                     </div>
                     <div className="relative">
                       <Video size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted2)]"/>
