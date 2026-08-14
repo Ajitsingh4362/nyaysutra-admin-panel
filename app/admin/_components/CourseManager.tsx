@@ -2,11 +2,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   Plus, Trash2, Edit3, X, Save, Upload, RefreshCw, GraduationCap, Star,
-  Eye, Search, CheckCircle, ChevronDown, ChevronUp, BookOpen, FileText, Video, Mic
+  Eye, Search, CheckCircle, ChevronDown, ChevronUp, BookOpen, FileText, Video, Mic, HelpCircle
 } from 'lucide-react';
 
+interface QuizQuestion {
+  question: string; options: string[]; correctIndex: number;
+}
 interface Module {
-  title: string; description: string; content: string; pdfUrl: string; videoUrl: string; audioUrl: string; order: number; published: boolean;
+  title: string; description: string; content: string; pdfUrl: string; videoUrl: string; audioUrl: string; order: number; published: boolean; quiz: QuizQuestion[];
 }
 interface Course {
   _id?: string; title: string; slug?: string; shortSummary: string; fullDescription: string;
@@ -22,7 +25,8 @@ const blank: Course = {
   learningOutcomes:[], prerequisites:[], hasCertificate:false, status:'published', featured:false,
 };
 
-const blankModule: Module = { title:'', description:'', content:'', pdfUrl:'', videoUrl:'', audioUrl:'', order:0, published:true };
+const blankModule: Module = { title:'', description:'', content:'', pdfUrl:'', videoUrl:'', audioUrl:'', order:0, published:true, quiz:[] };
+const blankQuestion: QuizQuestion = { question:'', options:['',''], correctIndex:0 };
 
 function CourseForm({ course, onSave, onCancel }: { course: Course|null; onSave:()=>void; onCancel:()=>void }) {
   const [form, setForm] = useState<Course>({ ...blank, ...(course||{}) });
@@ -74,6 +78,25 @@ function CourseForm({ course, onSave, onCancel }: { course: Course|null; onSave:
   const addModule = () => { setForm(p=>({...p, modules:[...p.modules, {...blankModule, order:p.modules.length}]})); setOpenModule(form.modules.length); };
   const removeModule = (idx:number) => setForm(p=>({...p, modules: p.modules.filter((_,i)=>i!==idx)}));
   const updateModule = (idx:number, k: keyof Module, v:any) => setForm(p=>({...p, modules: p.modules.map((m,i)=> i===idx ? {...m,[k]:v} : m)}));
+
+  const addQuestion = (modIdx:number) => {
+    setForm(p=>({...p, modules: p.modules.map((m,i)=> i===modIdx ? {...m, quiz:[...(m.quiz||[]), {...blankQuestion}]} : m)}));
+  };
+  const removeQuestion = (modIdx:number, qIdx:number) => {
+    setForm(p=>({...p, modules: p.modules.map((m,i)=> i===modIdx ? {...m, quiz: (m.quiz||[]).filter((_,j)=>j!==qIdx)} : m)}));
+  };
+  const updateQuestion = (modIdx:number, qIdx:number, k: keyof QuizQuestion, v:any) => {
+    setForm(p=>({...p, modules: p.modules.map((m,i)=> i===modIdx ? {...m, quiz: (m.quiz||[]).map((q,j)=> j===qIdx ? {...q,[k]:v} : q)} : m)}));
+  };
+  const addOption = (modIdx:number, qIdx:number) => {
+    setForm(p=>({...p, modules: p.modules.map((m,i)=> i===modIdx ? {...m, quiz: (m.quiz||[]).map((q,j)=> j===qIdx ? {...q, options:[...q.options,'']} : q)} : m)}));
+  };
+  const updateOption = (modIdx:number, qIdx:number, optIdx:number, v:string) => {
+    setForm(p=>({...p, modules: p.modules.map((m,i)=> i===modIdx ? {...m, quiz: (m.quiz||[]).map((q,j)=> j===qIdx ? {...q, options: q.options.map((o,k)=>k===optIdx?v:o)} : q)} : m)}));
+  };
+  const removeOption = (modIdx:number, qIdx:number, optIdx:number) => {
+    setForm(p=>({...p, modules: p.modules.map((m,i)=> i===modIdx ? {...m, quiz: (m.quiz||[]).map((q,j)=> j===qIdx ? {...q, options: q.options.filter((_,k)=>k!==optIdx), correctIndex: q.correctIndex===optIdx?0:(q.correctIndex>optIdx?q.correctIndex-1:q.correctIndex)} : q)} : m)}));
+  };
 
   const handleSave = async (status:'published'|'draft') => {
     if (!form.title.trim()) { setMsg('⚠️ Course title is required.'); return; }
@@ -271,6 +294,61 @@ function CourseForm({ course, onSave, onCancel }: { course: Course|null; onSave:
                       <Mic size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted2)]"/>
                       <input value={mod.audioUrl} onChange={e=>updateModule(idx,'audioUrl',e.target.value)} className="input text-xs pl-8" placeholder="Audio URL"/>
                     </div>
+                  </div>
+
+                  {/* Quiz Builder */}
+                  <div className="pt-3 border-t border-[rgba(201,168,76,0.1)]">
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-[10px] text-[var(--muted2)] font-bold uppercase tracking-wider flex items-center gap-1.5">
+                        <HelpCircle size={11}/> Module Quiz ({(mod.quiz||[]).length} question{(mod.quiz||[]).length===1?'':'s'})
+                      </label>
+                      <button onClick={()=>addQuestion(idx)} className="btn-outline text-[11px] py-1 px-2.5"><Plus size={10}/> Add Question</button>
+                    </div>
+                    {(mod.quiz||[]).length === 0 ? (
+                      <p className="text-[11px] text-[var(--muted2)] italic">No quiz yet. Students will skip straight to "Mark Complete" for this module.</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {(mod.quiz||[]).map((q, qIdx) => (
+                          <div key={qIdx} className="p-3 rounded-xl bg-[rgba(255,255,255,0.02)] border border-[rgba(201,168,76,0.1)] space-y-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] text-[var(--gold)] font-bold shrink-0">Q{qIdx+1}.</span>
+                              <input
+                                value={q.question}
+                                onChange={e=>updateQuestion(idx,qIdx,'question',e.target.value)}
+                                className="input text-xs flex-1"
+                                placeholder="Enter the question..."
+                              />
+                              <button onClick={()=>removeQuestion(idx,qIdx)} className="tb-btn text-red-400 hover:bg-red-500/10 shrink-0"><Trash2 size={11}/></button>
+                            </div>
+                            <div className="space-y-1.5 pl-5">
+                              {q.options.map((opt, optIdx) => (
+                                <div key={optIdx} className="flex items-center gap-2">
+                                  <input
+                                    type="radio"
+                                    name={`correct-${idx}-${qIdx}`}
+                                    checked={q.correctIndex === optIdx}
+                                    onChange={()=>updateQuestion(idx,qIdx,'correctIndex',optIdx)}
+                                    className="accent-[var(--gold)] shrink-0"
+                                    title="Mark as correct answer"
+                                  />
+                                  <input
+                                    value={opt}
+                                    onChange={e=>updateOption(idx,qIdx,optIdx,e.target.value)}
+                                    className="input text-xs flex-1 py-1.5"
+                                    placeholder={`Option ${optIdx+1}`}
+                                  />
+                                  {q.options.length > 2 && (
+                                    <button onClick={()=>removeOption(idx,qIdx,optIdx)} className="text-[var(--muted2)] hover:text-red-400 shrink-0"><X size={12}/></button>
+                                  )}
+                                </div>
+                              ))}
+                              <button onClick={()=>addOption(idx,qIdx)} className="text-[10px] text-[var(--gold)] font-semibold pl-6">+ Add Option</button>
+                              <p className="text-[10px] text-[var(--muted2)] pl-6">Select the radio button next to the correct answer.</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

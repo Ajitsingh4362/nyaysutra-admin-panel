@@ -4,10 +4,10 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   ArrowLeft, RefreshCw, CheckCircle2, Circle, FileText, Video, Mic,
-  Lock, PlayCircle, Award, StickyNote, Download, ChevronLeft, ChevronRight, Maximize,
+  Lock, PlayCircle, Award, StickyNote, Download, ChevronLeft, ChevronRight, Maximize, HelpCircle, XCircle,
 } from 'lucide-react';
 
-type Tab = 'video' | 'notes' | 'resources';
+type Tab = 'video' | 'notes' | 'resources' | 'quiz';
 
 function getVideoEmbed(url: string): { type: 'youtube' | 'iframe' | 'direct'; embedUrl: string } | null {
   if (!url) return null;
@@ -32,6 +32,8 @@ export default function CoursePlayer() {
   const [activeModule, setActiveModule] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>('video');
   const [marking, setMarking] = useState(false);
+  const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -127,15 +129,23 @@ export default function CoursePlayer() {
   function goToModule(idx: number) {
     setActiveModule(idx);
     setVideoError(false);
+    setQuizAnswers({});
+    setQuizSubmitted(false);
     setActiveTab(currentModuleHasVideo(idx) ? 'video' : currentModuleHasNotes(idx) ? 'notes' : 'resources');
   }
   function currentModuleHasVideo(idx: number) { return !!modules[idx]?.videoUrl; }
   function currentModuleHasNotes(idx: number) { return !!modules[idx]?.content; }
 
+  const currentQuiz: any[] = currentModule?.quiz || [];
+  const quizScore = currentQuiz.reduce((acc, q, i) => acc + (quizAnswers[i] === q.correctIndex ? 1 : 0), 0);
+  const quizPassed = currentQuiz.length > 0 && quizSubmitted && quizScore === currentQuiz.length;
+  const allQuizAnswered = currentQuiz.length > 0 && currentQuiz.every((_, i) => quizAnswers[i] !== undefined);
+
   const tabs: { key: Tab; label: string; icon: any; show: boolean }[] = [
     { key: 'video', label: 'Video', icon: Video, show: !!currentModule?.videoUrl },
     { key: 'notes', label: 'Notes', icon: StickyNote, show: !!currentModule?.content },
     { key: 'resources', label: 'Resources', icon: FileText, show: !!(currentModule?.pdfUrl || currentModule?.audioUrl) },
+    { key: 'quiz', label: 'Quiz', icon: HelpCircle, show: currentQuiz.length > 0 },
   ];
   const visibleTabs = tabs.filter(t => t.show);
 
@@ -293,6 +303,81 @@ export default function CoursePlayer() {
                   </div>
                 )}
 
+                {activeTab === 'quiz' && (
+                  <div className="space-y-4">
+                    {!quizSubmitted && (
+                      <p className="text-xs text-[var(--muted2)] bg-[rgba(201,168,76,0.06)] border border-[rgba(201,168,76,0.15)] rounded-xl px-3 py-2">
+                        Answer all questions correctly to mark this module complete.
+                      </p>
+                    )}
+                    {currentQuiz.map((q: any, qIdx: number) => {
+                      const selected = quizAnswers[qIdx];
+                      const isCorrect = quizSubmitted && selected === q.correctIndex;
+                      const isWrong = quizSubmitted && selected !== undefined && selected !== q.correctIndex;
+                      return (
+                        <div key={qIdx} className={`p-4 rounded-xl border ${quizSubmitted ? (isCorrect ? 'border-green-500/40 bg-green-500/5' : 'border-red-500/40 bg-red-500/5') : 'border-[rgba(201,168,76,0.12)] bg-[rgba(201,168,76,0.03)]'}`}>
+                          <p className="text-sm font-medium mb-3 flex items-start gap-2">
+                            <span className="text-[var(--gold)] shrink-0">Q{qIdx+1}.</span> {q.question}
+                          </p>
+                          <div className="space-y-2">
+                            {q.options.map((opt: string, optIdx: number) => {
+                              const isThisCorrectAnswer = quizSubmitted && optIdx === q.correctIndex;
+                              const isThisSelectedWrong = quizSubmitted && selected === optIdx && optIdx !== q.correctIndex;
+                              return (
+                                <label
+                                  key={optIdx}
+                                  className={`flex items-center gap-2.5 text-sm p-2.5 rounded-lg border cursor-pointer transition-colors
+                                    ${isThisCorrectAnswer ? 'border-green-500/50 bg-green-500/10 text-green-300' : ''}
+                                    ${isThisSelectedWrong ? 'border-red-500/50 bg-red-500/10 text-red-300' : ''}
+                                    ${!quizSubmitted && selected === optIdx ? 'border-[var(--gold)] bg-[rgba(201,168,76,0.08)]' : ''}
+                                    ${!quizSubmitted && selected !== optIdx ? 'border-[rgba(201,168,76,0.12)] hover:border-[rgba(201,168,76,0.3)]' : ''}
+                                  `}
+                                >
+                                  <input
+                                    type="radio"
+                                    name={`quiz-q-${qIdx}`}
+                                    checked={selected === optIdx}
+                                    disabled={quizSubmitted}
+                                    onChange={() => setQuizAnswers(prev => ({ ...prev, [qIdx]: optIdx }))}
+                                    className="accent-[var(--gold)] shrink-0"
+                                  />
+                                  <span className="flex-1">{opt}</span>
+                                  {isThisCorrectAnswer && <CheckCircle2 size={14} className="text-green-400 shrink-0"/>}
+                                  {isThisSelectedWrong && <XCircle size={14} className="text-red-400 shrink-0"/>}
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {!quizSubmitted ? (
+                      <button
+                        onClick={() => setQuizSubmitted(true)}
+                        disabled={!allQuizAnswered}
+                        className="btn-gold text-sm disabled:opacity-40"
+                      >
+                        Submit Quiz
+                      </button>
+                    ) : (
+                      <div className={`flex items-center justify-between gap-3 p-3 rounded-xl border flex-wrap ${quizPassed ? 'border-green-500/40 bg-green-500/10' : 'border-red-500/40 bg-red-500/10'}`}>
+                        <span className={`text-sm font-semibold ${quizPassed ? 'text-green-300' : 'text-red-300'}`}>
+                          Score: {quizScore}/{currentQuiz.length} {quizPassed ? '— All correct! You can mark this module complete.' : '— Try again to unlock completion.'}
+                        </span>
+                        {!quizPassed && (
+                          <button
+                            onClick={() => { setQuizAnswers({}); setQuizSubmitted(false); }}
+                            className="btn-outline text-xs py-1.5 px-3"
+                          >
+                            Retry Quiz
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {visibleTabs.length === 0 && (
                   <p className="text-sm text-[var(--muted2)]">Content for this module is coming soon.</p>
                 )}
@@ -316,10 +401,11 @@ export default function CoursePlayer() {
                   </div>
                   <button
                     onClick={markComplete}
-                    disabled={marking || isCompleted}
-                    className={isCompleted ? 'btn-outline text-sm opacity-70' : 'btn-gold text-sm'}
+                    disabled={marking || isCompleted || (currentQuiz.length > 0 && !quizPassed)}
+                    className={isCompleted ? 'btn-outline text-sm opacity-70' : 'btn-gold text-sm disabled:opacity-40'}
+                    title={currentQuiz.length > 0 && !quizPassed && !isCompleted ? 'Pass the quiz to unlock this' : undefined}
                   >
-                    {isCompleted ? <><CheckCircle2 size={14}/> Completed</> : <><Circle size={14}/> {marking ? 'Saving...' : 'Mark as Complete'}</>}
+                    {isCompleted ? <><CheckCircle2 size={14}/> Completed</> : <><Circle size={14}/> {marking ? 'Saving...' : currentQuiz.length > 0 && !quizPassed ? 'Pass Quiz to Complete' : 'Mark as Complete'}</>}
                   </button>
                 </div>
               </div>
@@ -353,6 +439,7 @@ export default function CoursePlayer() {
                         {mod.videoUrl && <Video size={11}/>}
                         {mod.content && <StickyNote size={11}/>}
                         {mod.pdfUrl && <FileText size={11}/>}
+                        {mod.quiz?.length > 0 && <HelpCircle size={11}/>}
                       </span>
                     </button>
                   );
