@@ -163,6 +163,13 @@ a { text-decoration: none; color: inherit; }
 .input option { background: #0C1018; color: var(--ivory); }
 select.input { appearance: none; }
 
+/* ── GLOBAL SELECT/OPTION FIX (dropdown text visibility) ── */
+select { color: var(--ivory); }
+select option {
+  background-color: #0C1018;
+  color: var(--ivory);
+}
+
 /* ── NAV LINK ─────────────────────────────────────── */
 .nav-link {
   color: rgba(245,240,232,.7);

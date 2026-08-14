@@ -148,7 +148,7 @@ function RichEditor({ initialValue, onChange }: { initialValue: string; onChange
         <TBtn onClick={() => exec('redo')} title="Redo"><span className="text-xs">↪</span></TBtn>
         <div className="tb-sep"/>
         <select onChange={e => exec('fontName', e.target.value)}
-          className="text-[10px] bg-transparent border border-[rgba(201,168,76,0.2)] rounded px-1 text-[var(--muted2)] cursor-pointer">
+          className="text-[10px] bg-[#0C1018] border border-[rgba(201,168,76,0.2)] rounded px-1 text-[var(--ivory)] cursor-pointer">
           <option value="">Font</option>
           <option value="DM Sans">DM Sans</option>
           <option value="Cormorant Garamond">Cormorant</option>
