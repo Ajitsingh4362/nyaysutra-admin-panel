@@ -37,9 +37,9 @@ export default function Courts() {
   return (
     <main className="overflow-x-hidden">
       {/* OLD: <section className="relative py-20 px-4 overflow-hidden bg-[#0C1018]"> */}
-      <section className="relative pt-10 pb-20 px-4 overflow-hidden court-section">
+      <section className="relative pt-0 pb-20 px-4 overflow-hidden court-section">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(201,168,76,0.07),transparent_60%)] pointer-events-none"/>
-        <div className="container mx-auto relative z-10">
+        <div className="container mx-auto relative z-10 pt-4">
           <p className="tag">Jurisdiction & Coverage</p>
           <h1 className="section-title mt-3">Courts & Working<br/>Jurisdiction</h1>
           <p className="muted text-lg mt-5 max-w-3xl">NyayaSutra provides strategic legal support, drafting assistance, research coordination, and court-oriented legal preparation across all tiers of the Indian judicial system.</p>
