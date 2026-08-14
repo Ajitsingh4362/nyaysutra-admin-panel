@@ -959,8 +959,8 @@ export default function AdminPanel() {
                         </div>
                         <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
                           <select value={inq.status} onChange={e => updateInqStatus(inq._id, e.target.value)}
-                            className="input text-xs py-1.5 px-2 w-auto min-w-[90px]">
-                            {['new','read','replied','closed'].map(s => <option key={s} value={s}>{s}</option>)}
+                            className="input text-xs py-1.5 px-2 w-auto min-w-[90px]" style={{backgroundColor:'#0C1018', color:'var(--ivory)'}}>
+                            {['new','read','replied','closed'].map(s => <option key={s} value={s} style={{backgroundColor:'#0C1018', color:'var(--ivory)'}}>{s}</option>)}
                           </select>
                           <a href={`https://wa.me/${inq.phone?.replace(/\D/g,'')}`} target="_blank"
                             className="btn-gold text-xs py-1.5 px-3 justify-center"><MessageCircle size={11}/> WA</a>
