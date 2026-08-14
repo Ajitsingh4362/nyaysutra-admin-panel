@@ -168,7 +168,7 @@ export default async function Home() {
         <div className="marquee-track">
           {[0, 1].map(copy => (
             <div key={copy} className="flex items-center">
-              <span className="marquee-item">🎓 New Course Launching Soon on NyayaSutra <span className="marquee-dot">●</span> Enroll Now to Get Early Access</span>
+              <span className="marquee-item">🎓 New Courses on NyayaSutra <span className="marquee-dot">●</span> Enroll Now to Get Early Access</span>
               <span className="marquee-item">⚖️ Strategic Litigation <span className="marquee-dot">●</span> Legal Research <span className="marquee-dot">●</span> Court Support</span>
               <span className="marquee-item">📞 First Consultation Free <span className="marquee-dot">●</span> Book Yours Today</span>
             </div>
