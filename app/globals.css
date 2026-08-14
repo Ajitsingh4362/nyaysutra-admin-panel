@@ -5,6 +5,7 @@
 
 /* ── VARIABLES ───────────────────────────────────── */
 :root {
+  color-scheme: dark;
   --bg:    #07090F;
   --bg2:   #0C1018;
   --bg3:   #101520;
@@ -16,6 +17,10 @@
   --muted2:#9A9080;
   --bdr:   rgba(201,168,76,0.18);
   --bdr2:  rgba(201,168,76,0.10);
+}
+
+select, select option {
+  color-scheme: dark;
 }
 
 /* ── RESET & BASE ────────────────────────────────── */
