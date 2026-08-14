@@ -147,17 +147,19 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ── INPUT ────────────────────────────────────────── */
-.input {
-  width: 100%;
-  background: rgba(255,255,255,.03);
-  border: 1px solid var(--bdr);
-  border-radius: .875rem;
-  padding: .875rem 1rem;
-  color: var(--ivory);
-  outline: none;
-  transition: border-color .2s, background .2s;
-  font-family: 'DM Sans', sans-serif;
-  font-size: .9rem;
+@layer components {
+  .input {
+    width: 100%;
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--bdr);
+    border-radius: .875rem;
+    padding: .875rem 1rem;
+    color: var(--ivory);
+    outline: none;
+    transition: border-color .2s, background .2s;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem;
+  }
 }
 .input:focus { border-color: var(--gold); background: rgba(201,168,76,.04); }
 .input option { background: #0C1018; color: var(--ivory); }
