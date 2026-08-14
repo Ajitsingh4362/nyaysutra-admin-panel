@@ -148,7 +148,7 @@ function RichEditor({ initialValue, onChange }: { initialValue: string; onChange
         <TBtn onClick={() => exec('redo')} title="Redo"><span className="text-xs">↪</span></TBtn>
         <div className="tb-sep"/>
         <select onChange={e => exec('fontName', e.target.value)}
-          className="text-[10px] bg-[#0C1018] border border-[rgba(201,168,76,0.2)] rounded px-1 text-[var(--ivory)] cursor-pointer">
+          className="text-[10px] bg-white border border-[rgba(139,107,42,0.25)] rounded px-1 text-[#221A0F] cursor-pointer">
           <option value="">Font</option>
           <option value="DM Sans">DM Sans</option>
           <option value="Cormorant Garamond">Cormorant</option>
@@ -959,8 +959,8 @@ export default function AdminPanel() {
                         </div>
                         <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
                           <select value={inq.status} onChange={e => updateInqStatus(inq._id, e.target.value)}
-                            className="input text-xs py-1.5 px-2 w-auto min-w-[90px]" style={{backgroundColor:'#0C1018', color:'var(--ivory)'}}>
-                            {['new','read','replied','closed'].map(s => <option key={s} value={s} style={{backgroundColor:'#0C1018', color:'var(--ivory)'}}>{s}</option>)}
+                            className="input text-xs py-1.5 px-2 w-auto min-w-[90px]">
+                            {['new','read','replied','closed'].map(s => <option key={s} value={s}>{s}</option>)}
                           </select>
                           <a href={`https://wa.me/${inq.phone?.replace(/\D/g,'')}`} target="_blank"
                             className="btn-gold text-xs py-1.5 px-3 justify-center"><MessageCircle size={11}/> WA</a>

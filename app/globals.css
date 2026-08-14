@@ -5,7 +5,6 @@
 
 /* ── VARIABLES ───────────────────────────────────── */
 :root {
-  color-scheme: dark;
   --bg:    #07090F;
   --bg2:   #0C1018;
   --bg3:   #101520;
@@ -17,10 +16,6 @@
   --muted2:#9A9080;
   --bdr:   rgba(201,168,76,0.18);
   --bdr2:  rgba(201,168,76,0.10);
-}
-
-select, select option {
-  color-scheme: dark;
 }
 
 /* ── RESET & BASE ────────────────────────────────── */
@@ -168,12 +163,7 @@ a { text-decoration: none; color: inherit; }
 .input option { background: #0C1018; color: var(--ivory); }
 select.input { appearance: none; }
 
-/* ── GLOBAL SELECT/OPTION FIX (dropdown text visibility) ── */
-select { color: var(--ivory); }
-select option {
-  background-color: #0C1018;
-  color: var(--ivory);
-}
+body { color-scheme: dark; }
 
 /* ── NAV LINK ─────────────────────────────────────── */
 .nav-link {
@@ -629,3 +619,22 @@ textarea:focus-visible,
 .admin-cream .admin-table th { color: var(--muted2); border-bottom: 1px solid rgba(139,107,42,0.15); }
 .admin-cream .admin-table td { border-bottom: 1px solid rgba(139,107,42,0.08); color: var(--ivory); }
 .admin-cream .admin-table tr:hover td { background: rgba(139,107,42,0.04); }
+
+/* ── ADMIN CREAM: DROPDOWN (select/option) VISIBILITY FIX ── */
+.admin-cream select,
+.admin-cream select.input {
+  color-scheme: light;
+  background-color: #FFFFFF;
+  color: #221A0F;
+  border-color: var(--bdr);
+}
+.admin-cream select option {
+  background-color: #FFFFFF;
+  color: #221A0F;
+}
+.admin-cream select option:checked,
+.admin-cream select option:hover,
+.admin-cream select option:focus {
+  background-color: #9C7A2E;
+  color: #FFFFFF;
+}
