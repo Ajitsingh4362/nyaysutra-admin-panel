@@ -40,7 +40,7 @@ export default function Courts() {
       <section className="relative pt-10 pb-20 px-4 overflow-hidden court-section">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(201,168,76,0.07),transparent_60%)] pointer-events-none"/>
         <div className="container mx-auto relative z-10">
-          <p className="tag">Jurisdiction & Coverage</p>
+          <p className="tag" style={{color:'#00FF00', fontSize:'1.2rem'}}>✅ TEST CHANGE — Jurisdiction & Coverage</p>
           <h1 className="section-title mt-3">Courts & Working<br/>Jurisdiction</h1>
           <p className="muted text-lg mt-5 max-w-3xl">NyayaSutra provides strategic legal support, drafting assistance, research coordination, and court-oriented legal preparation across all tiers of the Indian judicial system.</p>
         </div>
