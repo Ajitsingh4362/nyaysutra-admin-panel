@@ -35,6 +35,57 @@ interface Inquiry {
   createdAt: string;
 }
 
+// ─── CUSTOM STATUS DROPDOWN (no native <select>, full color control, no blue) ──
+function StatusDropdown({ value, options, onChange }: { value: string; options: string[]; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onClickOutside = (e: MouseEvent) => {
+      if (boxRef.current && !boxRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onClickOutside);
+    return () => document.removeEventListener('mousedown', onClickOutside);
+  }, []);
+
+  return (
+    <div ref={boxRef} className="relative w-auto min-w-[90px]">
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center justify-between gap-1.5 text-xs py-1.5 px-2 rounded-xl border transition-colors"
+        style={{ background: '#FFFFFF', color: '#221A0F', borderColor: 'rgba(139,107,42,0.25)' }}
+      >
+        <span className="capitalize">{value}</span>
+        <ChevronDown size={12} style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .15s' }} />
+      </button>
+      {open && (
+        <div
+          className="absolute z-50 mt-1 w-full rounded-xl border overflow-hidden shadow-lg"
+          style={{ background: '#FFFFFF', borderColor: 'rgba(139,107,42,0.25)' }}
+        >
+          {options.map(opt => (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => { onChange(opt); setOpen(false); }}
+              className="w-full text-left text-xs px-3 py-2 capitalize transition-colors"
+              style={{
+                background: opt === value ? '#9C7A2E' : '#FFFFFF',
+                color: opt === value ? '#FFFFFF' : '#221A0F',
+              }}
+              onMouseEnter={e => { if (opt !== value) e.currentTarget.style.background = 'rgba(156,122,46,0.12)'; }}
+              onMouseLeave={e => { if (opt !== value) e.currentTarget.style.background = '#FFFFFF'; }}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 const BLOG_CATS = [
   'Constitutional Law','Daily Legal Intelligence','Criminal Law','Civil Law',
   'Matrimonial & Family Law','Property Law','Consumer Protection','Labour Law',
@@ -958,10 +1009,11 @@ export default function AdminPanel() {
                           )}
                         </div>
                         <div className="flex flex-wrap sm:flex-col gap-2 shrink-0">
-                          <select value={inq.status} onChange={e => updateInqStatus(inq._id, e.target.value)}
-                            className="input text-xs py-1.5 px-2 w-auto min-w-[90px]">
-                            {['new','read','replied','closed'].map(s => <option key={s} value={s}>{s}</option>)}
-                          </select>
+                          <StatusDropdown
+                            value={inq.status}
+                            options={['new','read','replied','closed']}
+                            onChange={(v) => updateInqStatus(inq._id, v)}
+                          />
                           <a href={`https://wa.me/${inq.phone?.replace(/\D/g,'')}`} target="_blank"
                             className="btn-gold text-xs py-1.5 px-3 justify-center"><MessageCircle size={11}/> WA</a>
                           <a href={`tel:${inq.phone}`} className="btn-outline text-xs py-1.5 px-3 justify-center"><Phone size={11}/></a>
