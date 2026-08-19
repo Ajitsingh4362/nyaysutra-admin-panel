@@ -1,35 +1,32 @@
-'use client';
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, ChevronRight, RefreshCw } from 'lucide-react';
+import { ArrowRight, ChevronRight } from 'lucide-react';
+import { connectDB } from '@/lib/mongodb';
+import Blog from '@/lib/models/Blog';
 
-interface Blog {
+interface BlogItem {
   _id: string; title: string; category: string; excerpt: string;
-  readTime: string; slug: string; publishedAt?: string;
+  readTime: string; slug: string;
 }
 
-export default function LatestBlogsSection() {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/blogs', { cache: 'no-store' })
-      .then(r => r.json())
-      .then(d => setBlogs(Array.isArray(d) ? d.slice(0, 18) : []))
-      .catch(() => setBlogs([]))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
-    return (
-      <section className="section section-light">
-        <div className="container px-4 mx-auto text-center py-10">
-          <RefreshCw size={22} className="animate-spin inline text-[var(--muted2)]"/>
-        </div>
-      </section>
-    );
+async function getLatestBlogs(): Promise<BlogItem[]> {
+  try {
+    await connectDB();
+    const blogs = await Blog.find({ status: 'published' }).sort({ publishedAt: -1 }).limit(18).lean();
+    return blogs.map((b: any) => ({
+      _id: String(b._id),
+      title: b.title,
+      category: b.category || 'Legal Article',
+      excerpt: b.excerpt || '',
+      readTime: b.readTime || '5 min read',
+      slug: b.slug,
+    }));
+  } catch {
+    return [];
   }
+}
 
+export default async function LatestBlogsSection() {
+  const blogs = await getLatestBlogs();
   if (blogs.length === 0) return null;
 
   return (
