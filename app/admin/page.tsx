@@ -593,7 +593,7 @@ export default function AdminPanel() {
   }, []);
 
   useEffect(() => {
-    if (authed) { loadBlogs(); loadInq(); }
+    if (authed) { Promise.all([loadBlogs(), loadInq()]); }
   }, [authed]);
 
   const handleLogin = async () => {
@@ -1028,16 +1028,16 @@ export default function AdminPanel() {
           )}
 
           {/* ──────────── GALLERY ──────────── */}
-          {tab==='gallery' && <GalleryManager/>}
+          <div style={{ display: tab==='gallery' ? 'block' : 'none' }}><GalleryManager/></div>
 
           {/* ──────────── COURSES ──────────── */}
-          {tab==='courses' && <CourseManager/>}
+          <div style={{ display: tab==='courses' ? 'block' : 'none' }}><CourseManager/></div>
 
           {/* ──────────── ADVOCATE TEAM ──────────── */}
-          {tab==='team' && <TeamManager/>}
+          <div style={{ display: tab==='team' ? 'block' : 'none' }}><TeamManager/></div>
 
           {/* ──────────── CERTIFICATES ──────────── */}
-          {tab==='certificates' && <CertificateManager/>}
+          <div style={{ display: tab==='certificates' ? 'block' : 'none' }}><CertificateManager/></div>
 
           {/* ──────────── ANALYTICS (Disabled until Google Analytics ID is added) ──────────── */}
           {/* {tab==='analytics' && <AnalyticsDashboard/>} */}
