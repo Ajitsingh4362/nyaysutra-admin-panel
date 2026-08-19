@@ -818,7 +818,7 @@ export default function AdminPanel() {
               </div>
 
               {/* ── SVG Analytics Charts ── */}
-              <DashboardCharts/>
+              <DashboardCharts inquiries={inquiries} blogs={blogs}/>
 
               <div className="grid lg:grid-cols-2 gap-5">
                 <div className="card">

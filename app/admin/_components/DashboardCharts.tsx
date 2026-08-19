@@ -1,6 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { RefreshCw, TrendingUp, BarChart2, PieChart, Users, FileText, Inbox } from 'lucide-react';
+import { TrendingUp, BarChart2, PieChart, Users, FileText, Inbox } from 'lucide-react';
 
 interface Inquiry {
   _id: string; name: string; service: string; status: string;
@@ -147,30 +146,8 @@ function Sparkline({ data, color = '#7A5E20' }: { data: number[]; color?: string
 }
 
 // ── Main Dashboard Charts ────────────────────────────────────────
-export default function DashboardCharts() {
-  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    Promise.all([
-      fetch('/api/inquiries').then(r => r.ok ? r.json() : []).catch(() => []),
-      fetch('/api/blogs?admin=1').then(r => r.ok ? r.json() : []).catch(() => []),
-    ]).then(([inq, bl]) => {
-      setInquiries(Array.isArray(inq) ? inq : []);
-      setBlogs(Array.isArray(bl) ? bl : []);
-      setLoading(false);
-    });
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-10">
-        <RefreshCw size={20} className="animate-spin text-[var(--muted2)]"/>
-        <span className="text-xs text-[var(--muted2)] ml-2">Loading charts...</span>
-      </div>
-    );
-  }
+export default function DashboardCharts({ inquiries, blogs }: { inquiries: Inquiry[]; blogs: Blog[] }) {
+  // Data now comes from the parent (already loaded on login) — no fetch, no spinner here.
 
   // ── Derived data ─────────────────────────────────────────────
   const now = new Date();
