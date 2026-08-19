@@ -15,7 +15,7 @@ export default function LatestBlogsSection() {
   useEffect(() => {
     fetch('/api/blogs', { cache: 'no-store' })
       .then(r => r.json())
-      .then(d => setBlogs(Array.isArray(d) ? d.slice(0, 3) : []))
+      .then(d => setBlogs(Array.isArray(d) ? d.slice(0, 18) : []))
       .catch(() => setBlogs([]))
       .finally(() => setLoading(false));
   }, []);
