@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 
 import LatestBlogsSection from './LatestBlogsSection';
+import HomeGallerySection from './HomeGallerySection';
 
 const stats = [
   { num:'7+', label:'Years Experience' },
@@ -325,6 +326,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <HomeGallerySection />
 
       <LatestBlogsSection />
 
