@@ -588,14 +588,15 @@ textarea:focus-visible,
   color: var(--ivory);
 }
 .admin-cream .admin-sidebar {
-  background: linear-gradient(180deg, #FAF6EC, #F0E8D6);
-  border-right: 1px solid rgba(139,107,42,0.18);
+  background: linear-gradient(180deg, #3D0E14, #2A090F);
+  border-right: 1px solid rgba(201,168,76,0.18);
 }
+.admin-cream .admin-sidebar .admin-nav-item { color: #D9B8A8; }
+.admin-cream .admin-sidebar .admin-nav-item:hover { background: rgba(201,168,76,0.14); color: #F5E6D3; }
+.admin-cream .admin-sidebar .admin-nav-item.active { background: rgba(201,168,76,0.22); color: #E8C468; }
 .admin-cream .admin-main { background: var(--bg); }
-.admin-cream .admin-nav-item:hover { background: rgba(139,107,42,0.1); color: var(--ivory); }
-.admin-cream .admin-nav-item.active { background: rgba(139,107,42,0.16); color: var(--gold3); }
-.admin-cream .admin-nav-icon { background: rgba(139,107,42,0.1); }
-.admin-cream .admin-nav-item.active .admin-nav-icon { background: rgba(139,107,42,0.22); }
+.admin-cream .admin-nav-icon { background: rgba(201,168,76,0.12); }
+.admin-cream .admin-sidebar .admin-nav-item.active .admin-nav-icon { background: rgba(201,168,76,0.28); }
 .admin-cream .stat-card {
   background: linear-gradient(145deg, #FFFFFF, #FBF7EE);
   border: 1px solid var(--bdr2);

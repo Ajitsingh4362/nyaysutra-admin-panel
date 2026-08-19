@@ -732,7 +732,7 @@ export default function AdminPanel() {
           </div>
           <div>
             <p className="font-bold text-sm text-[var(--gold)] leading-tight">NyayaSutra</p>
-            <p className="text-[10px] text-[var(--muted2)]">Admin Panel</p>
+            <p className="text-[10px] text-[#B08A78]">Admin Panel</p>
           </div>
         </div>
 
@@ -753,7 +753,7 @@ export default function AdminPanel() {
 
         <div className="p-2.5 border-t border-[rgba(201,168,76,0.08)]">
           <a href="/" target="_blank"
-            className="admin-nav-item text-[var(--muted2)] hover:text-[var(--gold)] mb-1">
+            className="admin-nav-item text-[#B08A78] hover:text-[var(--gold)] mb-1">
             <span className="admin-nav-icon"><ExternalLink size={13}/></span>
             <span>View Website</span>
           </a>
