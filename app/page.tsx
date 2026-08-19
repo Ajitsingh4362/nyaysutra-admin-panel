@@ -14,6 +14,8 @@ import {
   GraduationCap, Award
 } from 'lucide-react';
 
+import LatestBlogsSection from './LatestBlogsSection';
+
 const stats = [
   { num:'7+', label:'Years Experience' },
   { num:'500+', label:'Cases Handled' },
@@ -55,25 +57,7 @@ const courts = [
   'Madras High Court','Chhattisgarh High Court','Kerala High Court','All District Courts',
 ];
 
-async function getLatestBlogs() {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-    const res = await fetch(`${baseUrl}/api/blogs`, { cache: 'no-store' });
-    if (!res.ok) throw new Error('fetch failed');
-    const blogs = await res.json();
-    return Array.isArray(blogs) ? blogs.slice(0,3) : [];
-  } catch {
-    return [
-      { _id:'1', title:'Understanding Your Fundamental Rights Under the Indian Constitution', category:'Constitutional Law', excerpt:'A guide for citizens to understand their rights before taking any legal action.', readTime:'5 min read', publishedAt:'2026-05-20T00:00:00.000Z', slug:'fundamental-rights-india' },
-      { _id:'2', title:'Supreme Court Weekly Digest — Landmark Judgments Explained', category:'Daily Legal Intelligence', excerpt:'Key Supreme Court judgments explained in simple language.', readTime:'7 min read', publishedAt:'2026-06-01T00:00:00.000Z', slug:'sc-weekly-digest' },
-      { _id:'3', title:'Bail Rights, FIR Procedure and Criminal Law Basics', category:'Criminal Law', excerpt:'Essential knowledge about FIR filing, bail procedures and rights of the accused.', readTime:'6 min read', publishedAt:'2026-05-28T00:00:00.000Z', slug:'bail-fir-guide' },
-    ];
-  }
-}
-
-export default async function Home() {
-  const blogs = await getLatestBlogs();
-
+export default function Home() {
   return (
     <main className="overflow-x-hidden">
       <VisitorPopup />
@@ -342,32 +326,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ── LATEST BLOG ── */}
-      {/* OLD (dark): <section className="section bg-[#0C1018]"> */}
-      <section className="section section-light">
-        <div className="container px-4 mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
-            <div>
-              <p className="tag">Legal Intelligence</p>
-              <h2 className="section-title mt-2">Latest Articles</h2>
-            </div>
-            <Link href="/blog" className="btn-outline shrink-0 text-sm">All Articles <ArrowRight size={13}/></Link>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {blogs.map((blog: any) => (
-              <Link key={blog._id || blog.id} href={`/blog/${blog.slug}`} className="card-link group">
-                <span className="text-[10px] font-bold text-[var(--gold)] uppercase tracking-widest bg-[rgba(201,168,76,0.1)] px-3 py-1 rounded-full">{blog.category}</span>
-                <h3 className="font-display text-lg font-semibold leading-snug mt-3 group-hover:text-[var(--gold)] transition-colors line-clamp-2">{blog.title}</h3>
-                <p className="text-[var(--muted2)] text-sm mt-2 leading-relaxed line-clamp-3">{blog.excerpt}</p>
-                <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(201,168,76,0.1)]">
-                  <span className="text-xs text-[var(--muted2)]">{blog.readTime}</span>
-                  <span className="text-[var(--gold)] text-xs font-semibold inline-flex items-center gap-1">Read <ChevronRight size={11}/></span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      <LatestBlogsSection />
 
       {/* ── CTA ── */}
       <section className="py-16 px-4 relative overflow-hidden">
