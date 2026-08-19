@@ -6,7 +6,7 @@ interface Inquiry {
   contactMethod: string; createdAt: string;
 }
 interface Blog {
-  _id: string; title: string; category: string; status: string;
+  _id?: string; title: string; category: string; status: string;
   publishedAt: string; views?: number;
 }
 
