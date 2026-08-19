@@ -25,7 +25,7 @@ export default function PracticeDetail({ params }: { params: { slug: string } })
   return (
     <main className="overflow-x-hidden">
       {/* Hero */}
-      <section className="relative py-16 px-4 bg-[#0C1018] overflow-hidden">
+      <section className="relative py-16 px-4 bg-[#EFE7D6] overflow-hidden">
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(201,168,76,0.07),transparent_60%)] pointer-events-none"/>
         <div className="container mx-auto relative z-10">
           <Link href="/practice-areas" className="inline-flex items-center gap-2 text-sm text-[var(--muted2)] hover:text-[var(--gold)] mb-6 transition-colors">

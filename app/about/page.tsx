@@ -39,7 +39,7 @@ export default function About() {
   return (
     <main className="overflow-x-hidden">
       {/* Hero */}
-      <section className="relative py-20 px-4 overflow-hidden bg-[#0C1018]">
+      <section className="relative py-20 px-4 overflow-hidden bg-[#EFE7D6]">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(201,168,76,0.08),transparent_60%)] pointer-events-none"/>
         <div className="container mx-auto relative z-10">
           <p className="tag">About NyayaSutra</p>
@@ -100,7 +100,7 @@ export default function About() {
       </section>
 
       {/* Pillars */}
-      <section className="section bg-[#0C1018]">
+      <section className="section bg-[#EFE7D6]">
         <div className="container px-4 mx-auto">
           <div className="grid lg:grid-cols-[220px_1fr] gap-12 items-start mb-12">
             <FadeInSection direction="right" className="hidden lg:block">
@@ -154,7 +154,7 @@ export default function About() {
       </section>
 
       {/* Timeline */}
-      <section className="section bg-[#0C1018]">
+      <section className="section bg-[#EFE7D6]">
         <div className="container px-4 mx-auto !max-w-3xl">
           <div className="text-center mb-12">
             <p className="tag">Our Journey</p>
@@ -165,7 +165,7 @@ export default function About() {
             <div className="space-y-10">
               {timeline.map((item, i) => (
                 <div key={i} className="relative">
-                  <div className="absolute -left-5 sm:-left-7 top-1 w-4 h-4 rounded-full bg-[var(--gold)] border-4 border-[#0C1018]"/>
+                  <div className="absolute -left-5 sm:-left-7 top-1 w-4 h-4 rounded-full bg-[var(--gold)] border-4 border-[#EFE7D6]"/>
                   <p className="tag text-xs">{item.year}</p>
                   <h3 className="font-display text-xl font-semibold mt-1">{item.title}</h3>
                   <p className="muted text-sm mt-2 leading-relaxed">{item.desc}</p>
@@ -178,7 +178,7 @@ export default function About() {
 
       {/* CTA */}
       {/* Meet the Team teaser */}
-      <section className="section-sm bg-[#0C1018] px-4">
+      <section className="section-sm bg-[#EFE7D6] px-4">
         <div className="container mx-auto text-center">
           <p className="tag">Our People</p>
           <h2 className="font-display text-3xl font-bold mt-3">Meet the Advocate Team</h2>

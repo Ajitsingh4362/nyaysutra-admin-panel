@@ -34,7 +34,7 @@ export default function CoursesSection() {
   if (courses.length === 0) return null;
 
   return (
-    <section id="courses" className="section bg-[#0C1018]">
+    <section id="courses" className="section bg-[#EFE7D6]">
       <div className="container px-4 mx-auto">
         <div className="text-center mb-12">
           <p className="tag">Self-Paced Learning</p>

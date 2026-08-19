@@ -34,7 +34,7 @@ export default function Contact() {
   return (
     <main className="overflow-x-hidden">
       {/* Hero */}
-      <section className="relative py-20 px-4 overflow-hidden bg-[#0C1018]">
+      <section className="relative py-20 px-4 overflow-hidden bg-[#EFE7D6]">
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(201,168,76,0.07),transparent_60%)] pointer-events-none"/>
         <div className="container mx-auto relative z-10">
           <p className="tag">Get In Touch</p>
@@ -160,7 +160,7 @@ export default function Contact() {
       </section>
 
       {/* Consultation services */}
-      <section className="section bg-[#0C1018] px-4">
+      <section className="section bg-[#EFE7D6] px-4">
         <div className="container mx-auto">
           <div className="text-center mb-8">
             <p className="tag">Consultation Support</p>

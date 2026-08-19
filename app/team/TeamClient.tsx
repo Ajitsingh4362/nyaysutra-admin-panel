@@ -22,7 +22,7 @@ export default function TeamClient({ members }: { members: TeamMember[] }) {
   return (
     <main className="overflow-x-hidden">
       {/* Hero */}
-      <section className="relative py-20 px-4 overflow-hidden bg-[#0C1018]">
+      <section className="relative py-20 px-4 overflow-hidden bg-[#EFE7D6]">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(201,168,76,0.07),transparent_60%)] pointer-events-none"/>
         <div className="container mx-auto relative z-10">
           <p className="tag">Our People</p>
@@ -54,7 +54,7 @@ export default function TeamClient({ members }: { members: TeamMember[] }) {
                 <div className="grid md:grid-cols-2 gap-6">
                   {featured.map(m => (
                     <div key={m._id} className="card flex flex-col sm:flex-row gap-5">
-                      <div className="w-full sm:w-36 h-44 sm:h-auto rounded-2xl overflow-hidden bg-[#101520] shrink-0 border border-[rgba(201,168,76,0.18)]">
+                      <div className="w-full sm:w-36 h-44 sm:h-auto rounded-2xl overflow-hidden bg-[#E8DEC8] shrink-0 border border-[rgba(201,168,76,0.18)]">
                         {m.photo
                           ? <img src={m.photo} alt={m.name} className="w-full h-full object-cover object-top"/>
                           : <div className="w-full h-full flex items-center justify-center"><Users size={28} className="text-[var(--muted2)] opacity-40"/></div>}
@@ -80,7 +80,7 @@ export default function TeamClient({ members }: { members: TeamMember[] }) {
 
           {/* Regular Team Grid */}
           {regular.length > 0 && (
-            <section className={`section ${featured.length > 0 ? 'bg-[#0C1018]' : ''}`}>
+            <section className={`section ${featured.length > 0 ? 'bg-[#EFE7D6]' : ''}`}>
               <div className="container px-4 mx-auto">
                 <div className="flex items-center gap-4 mb-8">
                   <p className="tag">Our Team</p>
@@ -89,7 +89,7 @@ export default function TeamClient({ members }: { members: TeamMember[] }) {
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                   {regular.map(m => (
                     <button key={m._id} onClick={() => setSelected(m)} className="card-link text-left">
-                      <div className="aspect-[4/5] rounded-xl overflow-hidden bg-[#101520] mb-4 border border-[rgba(201,168,76,0.12)]">
+                      <div className="aspect-[4/5] rounded-xl overflow-hidden bg-[#E8DEC8] mb-4 border border-[rgba(201,168,76,0.12)]">
                         {m.photo
                           ? <img src={m.photo} alt={m.name} className="w-full h-full object-cover object-top"/>
                           : <div className="w-full h-full flex items-center justify-center"><Users size={28} className="text-[var(--muted2)] opacity-40"/></div>}
@@ -128,7 +128,7 @@ export default function TeamClient({ members }: { members: TeamMember[] }) {
             </button>
             <div className="p-6 sm:p-8">
               <div className="flex flex-col sm:flex-row gap-5 items-start">
-                <div className="w-28 h-28 rounded-2xl overflow-hidden bg-[#101520] shrink-0 border-2 border-[rgba(201,168,76,0.25)] mx-auto sm:mx-0">
+                <div className="w-28 h-28 rounded-2xl overflow-hidden bg-[#E8DEC8] shrink-0 border-2 border-[rgba(201,168,76,0.25)] mx-auto sm:mx-0">
                   {selected.photo
                     ? <img src={selected.photo} alt={selected.name} className="w-full h-full object-cover object-top"/>
                     : <div className="w-full h-full flex items-center justify-center"><Users size={32} className="text-[var(--muted2)] opacity-40"/></div>}

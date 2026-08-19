@@ -151,7 +151,7 @@ export default function CoursePlayer() {
 
   return (
     <main className="overflow-x-hidden">
-      <section className="py-6 px-4 bg-[#0C1018] border-b border-[rgba(201,168,76,0.1)]">
+      <section className="py-6 px-4 bg-[#EFE7D6] border-b border-[rgba(201,168,76,0.1)]">
         <div className="container mx-auto">
           <Link href="/students/dashboard" className="inline-flex items-center gap-2 text-sm text-[var(--muted2)] hover:text-[var(--gold)] transition-colors">
             <ArrowLeft size={14}/> My Learning

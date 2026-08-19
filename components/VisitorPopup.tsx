@@ -15,7 +15,7 @@ export default function VisitorPopup() {
   return (
     <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="glass-dark rounded-3xl p-6 sm:p-8 w-full max-w-sm relative">
-        <button onClick={() => setShow(false)} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[rgba(255,255,255,0.06)] flex items-center justify-center text-[var(--muted2)] hover:text-white transition-colors"><X size={14}/></button>
+        <button onClick={() => setShow(false)} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[rgba(139,107,42,0.08)] flex items-center justify-center text-[var(--muted2)] hover:text-[var(--gold)] transition-colors"><X size={14}/></button>
         <div className="w-12 h-12 rounded-2xl bg-[rgba(201,168,76,0.12)] flex items-center justify-center mb-4">
           <span className="text-2xl">⚖️</span>
         </div>

@@ -89,7 +89,7 @@ export default function LanguageSwitcher() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-52 bg-[#0C1018] border border-[rgba(200,50,50,0.3)] rounded-2xl shadow-2xl overflow-hidden z-[200] max-h-72 overflow-y-auto">
+        <div className="absolute right-0 top-full mt-2 w-52 bg-[#FFFFFF] border border-[rgba(200,50,50,0.25)] rounded-2xl shadow-2xl overflow-hidden z-[200] max-h-72 overflow-y-auto">
           {languages.map(lang => (
             <button key={lang.code} onClick={() => changeLang(lang)}
               className={`w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:bg-[rgba(200,50,50,0.1)] ${selected.code === lang.code ? 'bg-[rgba(200,50,50,0.12)] text-[#E05555]' : 'text-[var(--muted2)]'}`}>

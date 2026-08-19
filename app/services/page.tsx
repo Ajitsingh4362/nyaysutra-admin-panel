@@ -15,7 +15,7 @@ const services = [
 export default function Services() {
   return (
     <main className="overflow-x-hidden">
-      <section className="relative py-20 px-4 overflow-hidden bg-[#0C1018]">
+      <section className="relative py-20 px-4 overflow-hidden bg-[#EFE7D6]">
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(201,168,76,0.07),transparent_60%)] pointer-events-none"/>
         <div className="container mx-auto relative z-10">
           <p className="tag">What We Do</p>
@@ -37,7 +37,7 @@ export default function Services() {
           ))}
         </div>
       </section>
-      <section className="section-sm bg-[#0C1018] px-4">
+      <section className="section-sm bg-[#EFE7D6] px-4">
         <div className="container mx-auto text-center">
           <h2 className="font-display text-3xl font-bold">Ready to get started?</h2>
           <p className="muted mt-3">First consultation is free. Contact us via WhatsApp or fill the contact form.</p>

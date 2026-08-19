@@ -17,7 +17,7 @@ export default function PracticeAreas() {
   return (
     <main className="overflow-x-hidden">
       {/* Hero */}
-      <section className="relative py-20 px-4 overflow-hidden bg-[#0C1018]">
+      <section className="relative py-20 px-4 overflow-hidden bg-[#EFE7D6]">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(201,168,76,0.07),transparent_60%)] pointer-events-none"/>
         <div className="container mx-auto relative z-10">
           <p className="tag">Comprehensive Legal Coverage</p>
@@ -65,7 +65,7 @@ export default function PracticeAreas() {
       </section>
 
       {/* CTA */}
-      <section className="section-sm bg-[#0C1018] px-4">
+      <section className="section-sm bg-[#EFE7D6] px-4">
         <div className="container mx-auto text-center">
           <h2 className="font-display text-3xl font-bold">Not sure which area covers your case?</h2>
           <p className="muted mt-3">Talk to Adv. A.K. Tripathi for a free first consultation.</p>

@@ -65,7 +65,7 @@ export default function Home() {
       {/* ── HERO ── */}
       {/* OLD: <section className="relative min-h-[92vh] flex items-center overflow-hidden"> */}
       <section className="relative min-h-[80vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#07090F] via-[#0C1018] to-[#07090F]"/>
+        <div className="absolute inset-0 bg-gradient-to-br from-[#F7F2E7] via-[#EFE7D6] to-[#F7F2E7]"/>
         <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-[radial-gradient(circle,rgba(201,168,76,0.1),transparent_65%)] pointer-events-none"/>
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(201,168,76,0.05),transparent_60%)] pointer-events-none"/>
         <GoldParticles count={22}/>
@@ -266,7 +266,7 @@ export default function Home() {
       </section>
 
       {/* ── STUDENT SECTION ── */}
-      <section className="section bg-[#0C1018]">
+      <section className="section bg-[#EFE7D6]">
         <div className="container px-4 mx-auto grid lg:grid-cols-2 gap-6">
           <div className="card">
             <GraduationCap className="text-[var(--gold)]" size={42}/>

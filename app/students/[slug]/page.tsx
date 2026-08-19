@@ -85,7 +85,7 @@ export default function CourseDetail() {
 
   return (
     <main className="overflow-x-hidden">
-      <section className="relative py-14 px-4 bg-[#0C1018] overflow-hidden">
+      <section className="relative py-14 px-4 bg-[#EFE7D6] overflow-hidden">
         <div className="container mx-auto relative z-10">
           <Link href="/students" className="inline-flex items-center gap-2 text-sm text-[var(--muted2)] hover:text-[var(--gold)] mb-6 transition-colors"><ArrowLeft size={14}/> Students & Internship</Link>
           <span className="text-[10px] font-bold text-[var(--gold)] uppercase tracking-widest bg-[rgba(201,168,76,0.1)] px-3 py-1 rounded-full">{course.level}</span>

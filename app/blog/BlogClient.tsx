@@ -33,7 +33,7 @@ export default function BlogClient({ posts }: { posts: BlogPostSummary[] }) {
   return (
     <main className="overflow-x-hidden">
       {/* Hero */}
-      <section className="relative py-20 px-4 overflow-hidden bg-[#0C1018]">
+      <section className="relative py-20 px-4 overflow-hidden bg-[#EFE7D6]">
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(201,168,76,0.07),transparent_60%)] pointer-events-none"/>
         <div className="container mx-auto relative z-10">
           <p className="tag">Legal Intelligence & Articles</p>
@@ -43,7 +43,7 @@ export default function BlogClient({ posts }: { posts: BlogPostSummary[] }) {
       </section>
 
       {/* Filter + Search */}
-      <div className="border-b border-[rgba(201,168,76,0.1)] bg-[#07090F] sticky top-16 z-30">
+      <div className="border-b border-[rgba(201,168,76,0.1)] bg-[#F7F2E7] sticky top-16 z-30">
         <div className="container mx-auto px-4 py-3">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <div className="relative flex-1 max-w-xs">
@@ -71,7 +71,7 @@ export default function BlogClient({ posts }: { posts: BlogPostSummary[] }) {
             <div className="grid sm:grid-cols-2 gap-5">
               {featured.map(post => (
                 <Link key={post.id} href={`/blog/${post.slug}`} className="card-link group">
-                  <div className="aspect-[16/7] rounded-xl bg-gradient-to-br from-[rgba(201,168,76,0.08)] to-[#101520] mb-4 flex items-center justify-center">
+                  <div className="aspect-[16/7] rounded-xl bg-gradient-to-br from-[rgba(201,168,76,0.08)] to-[#E8DEC8] mb-4 flex items-center justify-center">
                     <span className="text-4xl opacity-20">⚖️</span>
                   </div>
                   <span className="text-[10px] font-bold text-[var(--gold)] uppercase tracking-widest bg-[rgba(201,168,76,0.1)] px-3 py-1 rounded-full">{post.category}</span>
@@ -89,7 +89,7 @@ export default function BlogClient({ posts }: { posts: BlogPostSummary[] }) {
       )}
 
       {/* All posts */}
-      <section className={featured.length > 0 ? "section bg-[#0C1018]" : "section"}>
+      <section className={featured.length > 0 ? "section bg-[#EFE7D6]" : "section"}>
         <div className="container px-4 mx-auto">
           {filtered.length === 0 ? (
             <div className="text-center py-16"><p className="muted">No articles found.</p></div>

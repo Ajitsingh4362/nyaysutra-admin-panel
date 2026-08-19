@@ -67,7 +67,7 @@ function VerifyContent() {
   return (
     <main className="overflow-x-hidden">
       {/* Hero */}
-      <section className="relative py-20 px-4 overflow-hidden bg-[#0C1018]">
+      <section className="relative py-20 px-4 overflow-hidden bg-[#EFE7D6]">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(201,168,76,0.07),transparent_60%)] pointer-events-none"/>
         <div className="container mx-auto relative z-10 text-center">
           <div className="w-16 h-16 rounded-2xl bg-[rgba(201,168,76,0.12)] flex items-center justify-center mx-auto mb-5">
@@ -189,7 +189,7 @@ function VerifyContent() {
       </section>
 
       {/* Info */}
-      <section className="section-sm bg-[#0C1018] px-4">
+      <section className="section-sm bg-[#EFE7D6] px-4">
         <div className="container mx-auto !max-w-xl text-center">
           <p className="muted text-sm">
             All certificates issued by NyayaSutra — Legal Intelligence carry a unique certificate number. If you have questions about a certificate, please{' '}

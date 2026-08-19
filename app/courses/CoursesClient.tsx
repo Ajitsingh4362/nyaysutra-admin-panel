@@ -23,7 +23,7 @@ export default function CoursesClient({ courses }: { courses: Course[] }) {
 
   return (
     <main className="overflow-x-hidden">
-      <section className="relative py-16 px-4 bg-[#0C1018] text-center overflow-hidden">
+      <section className="relative py-16 px-4 bg-[#EFE7D6] text-center overflow-hidden">
         <div className="container mx-auto relative z-10">
           <p className="tag mx-auto">Learn at Your Own Pace</p>
           <h1 className="section-title mt-3">All Courses</h1>

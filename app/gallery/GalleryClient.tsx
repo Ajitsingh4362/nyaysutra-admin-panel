@@ -27,7 +27,7 @@ export default function GalleryClient({ items }: { items: GalleryItem[] }) {
 
   return (
     <main className="overflow-x-hidden">
-      <section className="relative py-20 px-4 overflow-hidden bg-[#0C1018]">
+      <section className="relative py-20 px-4 overflow-hidden bg-[#EFE7D6]">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(201,168,76,0.07),transparent_60%)] pointer-events-none"/>
         <div className="container mx-auto relative z-10">
           <p className="tag">Professional Journey</p>
@@ -37,7 +37,7 @@ export default function GalleryClient({ items }: { items: GalleryItem[] }) {
       </section>
 
       {/* Album Filter */}
-      <div className="border-b border-[rgba(201,168,76,0.1)] bg-[#07090F] sticky top-16 z-30">
+      <div className="border-b border-[rgba(201,168,76,0.1)] bg-[#F7F2E7] sticky top-16 z-30">
         <div className="container mx-auto px-4">
           <div className="flex gap-1 py-3 overflow-x-auto">
             {albums.map(a => (
@@ -63,7 +63,7 @@ export default function GalleryClient({ items }: { items: GalleryItem[] }) {
               {filtered.map(item => (
                 <div key={item._id} className="card-link overflow-hidden group p-0">
                   <button onClick={() => openLightbox(item, 0)} className="block w-full text-left">
-                    <div className="aspect-[4/3] relative overflow-hidden bg-[#101520]">
+                    <div className="aspect-[4/3] relative overflow-hidden bg-[#E8DEC8]">
                       {item.images?.[0]?.url ? (
                         <img src={item.images[0].url} alt={item.images[0].altText || item.title} loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
@@ -122,7 +122,7 @@ export default function GalleryClient({ items }: { items: GalleryItem[] }) {
       </section>
 
       {/* CTA */}
-      <section className="section-sm bg-[#0C1018] px-4">
+      <section className="section-sm bg-[#EFE7D6] px-4">
         <div className="container mx-auto text-center">
           <h2 className="font-display text-2xl font-bold">Want to add photos?</h2>
           <p className="muted text-sm mt-2">Upload gallery images from the Admin Panel.</p>

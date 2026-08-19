@@ -14,7 +14,7 @@ const socials = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[#050709] border-t border-[rgba(201,168,76,0.12)]">
+    <footer className="bg-[#F2EADA] border-t border-[rgba(139,107,42,0.18)]">
       {/* CTA */}
       <div className="border-b border-[rgba(201,168,76,0.1)] py-10 px-4">
         <div className="container mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">

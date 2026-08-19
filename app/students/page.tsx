@@ -24,7 +24,7 @@ const subjects = [
 export default function Students() {
   return (
     <main className="overflow-x-hidden">
-      <section className="relative py-20 px-4 overflow-hidden bg-[#0C1018]">
+      <section className="relative py-20 px-4 overflow-hidden bg-[#EFE7D6]">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(201,168,76,0.07),transparent_60%)] pointer-events-none"/>
         <div className="container mx-auto relative z-10">
           <p className="tag">Law Student Support</p>
@@ -65,7 +65,7 @@ export default function Students() {
       </section>
 
       {/* Subjects */}
-      <section className="section bg-[#0C1018]">
+      <section className="section bg-[#EFE7D6]">
         <div className="container px-4 mx-auto grid lg:grid-cols-2 gap-10">
           <div>
             <p className="tag">Subject Coverage</p>

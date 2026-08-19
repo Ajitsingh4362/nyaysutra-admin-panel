@@ -55,7 +55,7 @@ export default async function BlogPost({ params }: { params: { slug: string } })
   return (
     <main className="overflow-x-hidden">
       {/* Hero */}
-      <section className="relative py-14 px-4 bg-[#0C1018] overflow-hidden">
+      <section className="relative py-14 px-4 bg-[#EFE7D6] overflow-hidden">
         <div className="container mx-auto relative z-10">
           <Link href="/blog" className="inline-flex items-center gap-2 text-sm text-[var(--muted2)] hover:text-[var(--gold)] mb-6 transition-colors">
             <ArrowLeft size={14}/> All Articles
