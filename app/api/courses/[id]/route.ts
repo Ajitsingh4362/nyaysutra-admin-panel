@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { mapCourse, courseToRow } from '@/lib/mappers';
 import { withErrorHandling } from '@/lib/apiHandler';
+import { getAdminFromCookie } from '@/lib/auth';
 
 export const GET = withErrorHandling(async (req: Request, { params }: { params: { id: string } }) => {
   const sb = supabaseAdmin();
@@ -12,6 +13,11 @@ export const GET = withErrorHandling(async (req: Request, { params }: { params: 
 });
 
 export const PUT = withErrorHandling(async (req: Request, { params }: { params: { id: string } }) => {
+  const admin = getAdminFromCookie();
+  if (!admin) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const body = await req.json();
   const sb = supabaseAdmin();
   const { data, error } = await sb
@@ -27,6 +33,11 @@ export const PUT = withErrorHandling(async (req: Request, { params }: { params: 
 });
 
 export const DELETE = withErrorHandling(async (req: Request, { params }: { params: { id: string } }) => {
+  const admin = getAdminFromCookie();
+  if (!admin) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const sb = supabaseAdmin();
   const { error } = await sb.from('courses').delete().eq('id', params.id);
   if (error) throw error;

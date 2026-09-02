@@ -2,17 +2,32 @@ import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Gallery from '@/lib/models/Gallery';
 import { withErrorHandling } from '@/lib/apiHandler';
+import { getAdminFromCookie } from '@/lib/auth';
 
 export const GET = withErrorHandling(async (req: Request) => {
   await connectDB();
   const { searchParams } = new URL(req.url);
   const isAdmin = searchParams.get('admin') === '1';
-  const query = isAdmin ? {} : { status: 'published' };
-  const items = await Gallery.find(query).sort({ date: -1 }).lean();
+
+  if (isAdmin) {
+    const admin = getAdminFromCookie();
+    if (!admin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const items = await Gallery.find({}).sort({ date: -1 }).lean();
+    return NextResponse.json(items);
+  }
+
+  const items = await Gallery.find({ status: 'published' }).sort({ date: -1 }).lean();
   return NextResponse.json(items);
 });
 
 export const POST = withErrorHandling(async (req: Request) => {
+  const admin = getAdminFromCookie();
+  if (!admin) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   await connectDB();
   const body = await req.json();
   if (!body.title) {
