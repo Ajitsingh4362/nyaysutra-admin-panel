@@ -14,6 +14,7 @@ async function getPublishedBlogs(): Promise<BlogPostSummary[]> {
       title: b.title,
       category: b.category || 'Legal Article',
       excerpt: b.excerpt || '',
+      coverImage: b.coverImage || '',
       readTime: b.readTime || '5 min read',
       publishedAt: b.publishedAt || b.createdAt || new Date().toISOString(),
       tags: b.tags || [],
