@@ -44,8 +44,8 @@ export default async function LatestBlogsSection() {
           {blogs.map((blog) => (
             <Link key={blog._id} href={`/blog/${blog.slug}`} className="card-link group">
               {blog.coverImage && (
-                <div className="aspect-[16/9] rounded-lg overflow-hidden mb-3 bg-[#E8DEC8] flex items-center justify-center">
-                  <img src={blog.coverImage} alt={blog.title} loading="lazy" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"/>
+                <div className="rounded-lg overflow-hidden mb-3">
+                  <img src={blog.coverImage} alt={blog.title} loading="lazy" className="w-full h-auto block group-hover:scale-105 transition-transform duration-500"/>
                 </div>
               )}
               <span className="text-[10px] font-bold text-[var(--gold)] uppercase tracking-widest bg-[rgba(201,168,76,0.1)] px-3 py-1 rounded-full">{blog.category}</span>

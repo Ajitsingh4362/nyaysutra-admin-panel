@@ -75,8 +75,8 @@ export default async function BlogPost({ params }: { params: { slug: string } })
       {post.coverImage && (
         <section className="px-4 pt-10">
           <div className="container mx-auto">
-            <div className="aspect-[16/7] rounded-2xl overflow-hidden bg-[#EFE7D6] flex items-center justify-center">
-              <img src={post.coverImage} alt={post.title} className="w-full h-full object-contain"/>
+            <div className="rounded-2xl overflow-hidden">
+              <img src={post.coverImage} alt={post.title} className="w-full h-auto block"/>
             </div>
           </div>
         </section>
