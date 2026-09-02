@@ -74,7 +74,7 @@ export default function BlogClient({ posts }: { posts: BlogPostSummary[] }) {
                 <Link key={post.id} href={`/blog/${post.slug}`} className="card-link group">
                   <div className="aspect-[16/7] rounded-xl bg-gradient-to-br from-[rgba(201,168,76,0.08)] to-[#E8DEC8] mb-4 flex items-center justify-center overflow-hidden">
                     {post.coverImage ? (
-                      <img src={post.coverImage} alt={post.title} loading="lazy" className="w-full h-full object-cover"/>
+                      <img src={post.coverImage} alt={post.title} loading="lazy" className="w-full h-full object-contain"/>
                     ) : (
                       <span className="text-4xl opacity-20">⚖️</span>
                     )}
@@ -108,8 +108,8 @@ export default function BlogClient({ posts }: { posts: BlogPostSummary[] }) {
                 {(regular.length > 0 ? regular : filtered).map(post => (
                   <Link key={post.id} href={`/blog/${post.slug}`} className="card-link group">
                     {post.coverImage && (
-                      <div className="aspect-[16/9] rounded-lg overflow-hidden mb-3">
-                        <img src={post.coverImage} alt={post.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+                      <div className="aspect-[16/9] rounded-lg overflow-hidden mb-3 bg-[#E8DEC8] flex items-center justify-center">
+                        <img src={post.coverImage} alt={post.title} loading="lazy" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"/>
                       </div>
                     )}
                     <div className="flex items-center justify-between mb-3">
